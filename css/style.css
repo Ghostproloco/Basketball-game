@@ -403,3 +403,29 @@ button,.btn,.pk,.slot,.hslot{touch-action:manipulation;-webkit-tap-highlight-col
 .bbc.on{box-shadow:0 0 0 3px #fff,0 0 12px var(--rc)}
 .bhint{font-size:6px;color:#9ad;text-align:center}.bemp{font-size:7px;color:#9ad;line-height:1.6}
 @media (max-height:430px){#en{bottom:calc(max(22px,env(safe-area-inset-bottom)) + 150px);width:110px}.bnp{width:42px;height:48px}.bnp .hd{transform:translateX(-50%) scale(.25)}.bbc{width:64px}.bgrid{max-height:30vh}.bcc{padding:3px 6px}}
+
+/* ---- nombres en las casillas y alineación 3 vs 3 compacta ---- */
+.slot .nmb{position:absolute;left:0;right:0;bottom:0;padding:8px 2px 2px;font-size:6px;line-height:1.2;color:#fff;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:linear-gradient(#0000,#000c);text-shadow:1px 1px 0 #000;z-index:2}
+.lsp{position:relative;width:100%;height:96px;overflow:hidden;flex:none}
+.lsp .hd{position:absolute;left:50%;top:0;transform:translateX(-50%) scale(.46);transform-origin:top center}
+#lslots{flex-wrap:nowrap}
+.lbtns{position:sticky;bottom:0;padding:6px 0 2px;z-index:3}
+@media (max-height:460px){
+ #lineup,#teams{gap:5px;padding:6px 10px}
+ #lineup .lhead h2,#teams .lhead h2{font-size:9px}
+ #lslots{gap:8px}
+ .ls{width:clamp(96px,26vw,150px);padding:4px 6px;gap:2px;border-radius:12px;font-size:7px}
+ .ls .inv{height:62px;font-size:30px}
+ .lsp{height:64px}.lsp .hd{transform:translateX(-50%) scale(.31)}
+ .ls small{font-size:5px}.ls b{font-size:7px}
+ #lhint{font-size:6px;line-height:1.4}
+ #lgrid{max-height:none;overflow:visible;gap:5px;padding:2px}
+ #lgrid .slot{width:64px;height:62px}#lgrid .slot .hd{transform:scale(.36)}
+ .lbtns .btn{padding:7px 14px;font-size:8px}
+ .tmf,.tmp{height:64px}.tmp .hd{transform:translateX(-50%) scale(.31)}
+ #tmgrid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px}
+ .tm{padding:5px}
+}
+#lineup,#teams{justify-content:flex-start}
+#lgrid{padding-bottom:54px}
+.lbtns{background:linear-gradient(#0000,#0b0d1aee 35%)}
