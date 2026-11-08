@@ -133,7 +133,7 @@
 <script src="js/data.js"></script><script src="js/roster.js"></script><script src="js/hats.js"></script>
 <script src="js/game.js"></script><script src="js/firebase-config.js"></script>
 <script src="js/auth.js"></script>
-<script src="js/ui.js"></script><style>*{touch-action:manipulation!important}html,body,canvas,#controls,#controls *{touch-action:none!important}</style>
+<script src="js/ui.js"></script><script src="js/career.js"></script><style>*{touch-action:manipulation!important}html,body,canvas,#controls,#controls *{touch-action:none!important}</style>
 <script>
 /* sin zoom por doble toque / pellizco en iPhone */
 let _lt=0;document.addEventListener('touchend',e=>{const n=Date.now(),t=e.target;if(n-_lt<350&&t&&t.closest&&(t.closest('#controls')||t.id==='gameCanvas'))e.preventDefault();_lt=n},{passive:false});
