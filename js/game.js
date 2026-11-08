@@ -183,7 +183,7 @@ function startMatch(diff,rv){
  G={P:[a,b],hu:a,B:{h:null,fl:null,dk:null,net:false,x:0,y:0,z:0,vx:0,vy:0,vz:0,last:null,pcd:0},s:[0,0],t:120,mode:'intro',mt:170,diff,rv,fx:[],fr:0,poss:0,sd:false,shake:0,rc,mc,cam:-1};
  hudPortrait($('#hpL'),a.id,mc);hudPortrait($('#hpR'),b.id,rc);$('#nL').textContent=a.name;$('#nR').textContent=b.name;
  $('.hp.l').style.setProperty('--cl',mc);$('.hp.r').style.setProperty('--cr',rc);$('#sL').textContent=$('#sR').textContent=0;
- $('#hud').classList.remove('hidden');$('#controls').classList.remove('hidden');musicPlay('match');restart(0)}
+ $('#hud').classList.remove('hidden');$('#controls').classList.remove('hidden');musicPlay('match');restart(0);introSetup()}
 const opp=p=>{let b=null,bd=1e9;for(const q of G.P)if(q.t!==p.t){const d=dist(p,q);if(d<bd){bd=d;b=q}}return b};
 const SLOTPOS=[['PG','SG'],['SF','SG'],['PF','C']],SLOTN=['BASE','ALERO','PÍVOT'];
 function pickHu(){const B=G.B,h=G.hu;if(B.h&&B.h.t===0){if(h!==B.h&&!G.noSw){h.gd=false;G.hu=B.h}return}
@@ -228,7 +228,7 @@ function startMatch3(){const L=(save.lineup||lineupAuto()).slice(),used=new Set(
  G={P,n:3,bn:{},hu:P[0],B:{h:null,fl:null,dk:null,ps:null,net:false,x:0,y:0,z:0,vx:0,vy:0,vz:0,last:null,pcd:0},s:[0,0],t:150,mode:'intro',mt:170,diff:1,rv:tm,fx:[],fr:0,poss:0,sd:false,shake:0,rc,mc,cam:-1};
  hudPortrait($('#hpL'),P[0].id,mc);hudPortrait($('#hpR'),P[3].id,rc);$('#nL').textContent='TU EQUIPO';$('#nR').textContent=tm.name;
  $('.hp.l').style.setProperty('--cl',mc);$('.hp.r').style.setProperty('--cr',rc);$('#sL').textContent=$('#sR').textContent=0;
- $('#hud').classList.remove('hidden');$('#controls').classList.remove('hidden');musicPlay('match');restart(0)}
+ $('#hud').classList.remove('hidden');$('#controls').classList.remove('hidden');musicPlay('match');restart(0);introSetup()}
 const rageOn=p=>(p.rage||0)>performance.now(),RCOL={'TITÁN':'#b266ff','CORONA':'#ffd23d','REY 3PT':'#ff6a1a','MURALLA':'#ff3b3b','PÓSTER':'#3b8bff','FANTASMA':'#7fe8ff','JOKER':'#e6c86a','REBOTE':'#ff4fd8','CANDADO':'#8aa0c0'};
 const blkP=(p,o,b)=>rageOn(p)?rnd()<clamp((o.s.def-80)/110,0,.4):(o.pw2||towerOn(o)||rnd()<b);
 function flashFx(c){const f=$('#flash');if(!f)return;f.style.background=`radial-gradient(circle,${c}00 30%,${c}cc 100%)`;f.classList.remove('on');void f.offsetWidth;f.classList.add('on')}
@@ -253,10 +253,11 @@ function inbound(t){G.poss++;G.sc=16;G.scT=-1;const dT=t?-1:1,hd=HOOP[t?1:0],bx=
  for(const p of G.P){p.st='idle';p.tt=0;p.z=0;p.vx=p.vy=0;p.cd=20;p.slow=0}
  G.P.forEach(p=>{const k=G.n===3?p.sl:0;if(p.t===t){p.x=k?bx+dT*340:bx;p.y=YS[k];p.f=dT}else{p.x=LW/2+dT*(230+90*k);p.y=YS[k];p.f=-dT}});
  const o=G.n===3?G.P[t*3]:G.P[t],B=G.B;B.fl=B.dk=B.ps=null;B.net=false;B.rim=null;B.h=o;B.last=null;B.pcd=0;G.noSw=0;if(G.n===3)G.hu=t===0?o:(G.hu||G.P[0])}
-function startTip(){G.mode='tip';G.mt=140;const B=G.B;B.h=null;B.fl=B.dk=B.ps=null;B.net=false;B.rim=null;B.vx=B.vy=B.vz=0;msg('¡SALTO INICIAL!',70);
- G.tipP=G.n===3?[G.P[2],G.P[5]]:[G.P[0],G.P[1]];
+function tipSetup(){G.tipP=G.n===3?[G.P[2],G.P[5]]:[G.P[0],G.P[1]];
  for(const p of G.P){p.st='idle';p.tt=0;p.z=0;p.vx=p.vy=0;p.mv=false;p.gd=false}
  G.P.forEach(p=>{if(G.tipP.includes(p)){p.x=LW/2+(p.t?60:-60);p.y=1150;p.f=p.t?-1:1}else{const k=G.n===3?p.sl:0;p.x=LW/2+(p.t?1:-1)*(260+70*k);p.y=[1060,1250,1320][k%3];p.f=p.t?-1:1}})}
+function introSetup(){const B=G.B;B.h=null;B.fl=B.dk=B.ps=null;B.net=false;B.rim=null;B.vx=B.vy=B.vz=0;B.x=LW/2;B.y=1150;B.z=140;tipSetup()}
+function startTip(){G.mode='tip';G.mt=140;const B=G.B;B.h=null;B.fl=B.dk=B.ps=null;B.net=false;B.rim=null;B.vx=B.vy=B.vz=0;msg('¡SALTO INICIAL!',70);tipSetup()}
 function tipTick(){const B=G.B,m=G.mt--;B.x=LW/2;B.y=1150;B.z=m>90?(140-m)*6:Math.max(70,300-(90-m)*3);
  if(m===100)for(const q of G.tipP){q.st='block';q.tt=0}
  if(m===55){const sc=q=>(q.s.mat*.5+q.s.def*.5)*(CH[q.id].h||1)+rnd()*12,w=sc(G.tipP[0])>=sc(G.tipP[1])?G.tipP[0]:G.tipP[1];G.tipW=w;pop(w.x,w.y-260,'¡GANA EL SALTO!','#ffe45c',44);msg(CH[w.id].name+' gana el salto',60);sfx('swish')}
@@ -629,7 +630,7 @@ function tick(){if(!G||G.paused)return;G.fr++;if(G.slow>0){G.slow--;if(G.fr%3)re
  else if(G.mode==='score'){if(--G.mt<=0){if(G.sd||G.t<=0)return endMatch();inbound(1-G.who);G.mode='play'}}
  else if(G.mode==='tip')tipTick();
  else if(G.mode==='play'){shotClock();if(G.n===3)fatigue();G.t-=1/60;if(G.t<=0){G.t=0;const busy=B.fl||B.dk||G.P.some(p=>p.st==='shoot'||p.st==='dunk');if(!busy){if(G.s[0]!==G.s[1]){sfx('buzz');return endMatch()}if(!G.sd){G.sd=true;msg('¡MUERTE SÚBITA!',90)}}}}
- for(const p of G.P)p.ai=p!==G.hu;if(G.n===3)pickHu();if(G.mode!=='tip'){for(const p of G.P)stepP(p);stepBall();putback();if(B.fl&&(B.fl.fire||B.fl.ice||B.fl.bolt||B.fl.hook))fireTrail(B.fl.ice,B.fl.bolt,B.fl.hook);if(B.fl||B.dk||B.ps){const rg=B.last&&rageOn(B.last);G.fx.push({k:'p',x:B.x,y:B.y-B.z,vx:0,vy:0,t:0,T:rg?18:10,c:rg?RCOL[CH[B.last.id].pw]:'#ffb347',sz:rg?24:12,g:0})};
+ for(const p of G.P)p.ai=p!==G.hu;if(G.n===3)pickHu();if(G.mode!=='tip'){for(const p of G.P)stepP(p);if(G.mode==='intro')introSetup();else{stepBall();putback()}if(B.fl&&(B.fl.fire||B.fl.ice||B.fl.bolt||B.fl.hook))fireTrail(B.fl.ice,B.fl.bolt,B.fl.hook);if(B.fl||B.dk||B.ps){const rg=B.last&&rageOn(B.last);G.fx.push({k:'p',x:B.x,y:B.y-B.z,vx:0,vy:0,t:0,T:rg?18:10,c:rg?RCOL[CH[B.last.id].pw]:'#ffb347',sz:rg?24:12,g:0})};
   for(const p of G.P){ambFx(p);hatFx(p);legendTick(p);if(p.gd&&B.h&&B.h.t!==p.t&&p.st==='idle')p.f=B.h.x>=p.x?1:-1;if(rageOn(p)&&G.fr%2==0){const c=RCOL[CH[p.id].pw]||'#ffffff';if(G.fr%14===0){const w=CH[p.id].pw;if(w==='TITÁN')fxBolt(p.x+(rnd()-.5)*140,p.y,c);else if(w==='CORONA'&&G.fr%28===0)fxBeam(p.x,p.y,c);else if(w==='REY 3PT')burst(p.x,p.y-90,'#ffd23d',3,5)}G.fx.push({k:'p',x:p.x+(rnd()-.5)*50,y:p.y-p.z-rnd()*150,vx:(rnd()-.5)*2,vy:-2-rnd()*3,t:0,T:22,c,sz:8+rnd()*8,g:-.05});if(p.mv)G.fx.push({k:'p',x:p.x,y:p.y,vx:0,vy:0,t:0,T:46,c:c+'aa',sz:22,g:0})}}}
  for(let i=G.fx.length-1;i>=0;i--){const e=G.fx[i];e.t++;if(e.k==='p'||e.k==='sh'){e.x+=e.vx;e.y+=e.vy;e.vy+=(e.g==null?.5:e.g);if(e.k==='sh')e.r+=e.vr}if(e.t>e.T)G.fx.splice(i,1)}
  if(G.mode==='end')return;

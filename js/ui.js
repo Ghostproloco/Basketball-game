@@ -28,11 +28,11 @@ $('#g-back').onclick=()=>renderMenu();
 // ---- equipo ----
 let backTo='menu',tSel=0;let curMode=1,lSlot=0,curTeam=0;
 function lineupAuto(){const used=new Set(),L=[];SLOTPOS.forEach(ps=>{const c=CH.filter(x=>save.owned[x.id]&&ps.includes(x.pos)&&!used.has(x.id)).sort((a,b)=>b.rar*100+save.owned[b.id].lvl-a.rar*100-save.owned[a.id].lvl)[0];if(c){used.add(c.id);L.push(c.id)}else L.push(-1)});return L}
-function renderLineup(){const L=save.lineup;$('#lslots').innerHTML=L.map((id,k)=>`<div class="ls${lSlot==k?' on':''}" data-k="${k}"><small>${SLOTN[k]}</small>${id>=0?portrait(id):'<div class="inv">🎲</div>'}<b>${id>=0?CH[id].name:'INVITADO'}</b><small>${id>=0?CH[id].pos+' · '+CH[id].pw+' · Nv'+save.owned[id].lvl:SLOTPOS[k].join('/')+' · gratis'}</small></div>`).join('');
+function renderLineup(){const L=save.lineup;$('#lslots').innerHTML=L.map((id,k)=>`<div class="ls${lSlot==k?' on':''}" data-k="${k}"><small>${SLOTN[k]}</small>${id>=0?'<div class="lsp">'+portrait(id)+'</div>':'<div class="inv">🎲</div>'}<b>${id>=0?CH[id].name:'INVITADO'}</b><small>${id>=0?CH[id].pos+' · '+CH[id].pw+' · Nv'+save.owned[id].lvl:SLOTPOS[k].join('/')+' · gratis'}</small></div>`).join('');
  $$('#lslots .ls').forEach(e=>e.onclick=()=>{lSlot=+e.dataset.k;renderLineup()});
  const ok=CH.filter(c=>save.owned[c.id]&&SLOTPOS[lSlot].includes(c.pos)).sort((a,b)=>b.rar-a.rar||a.id-b.id);
  $('#lhint').textContent=`Posición ${SLOTN[lSlot]}: elige un ${SLOTPOS[lSlot].join(' o ')} de tus jugadores (si no tienes, entra un invitado)`;
- $('#lgrid').innerHTML=ok.map(c=>`<div class="slot${L[lSlot]==c.id?' sel':''}" style="--rc:${RAR[c.rar].c}" data-id="${c.id}">${portrait(c.id)}<span class="lvb">Nv${save.owned[c.id].lvl}</span></div>`).join('')+`<div class="slot inv2" data-id="-1">🎲</div>`;
+ $('#lgrid').innerHTML=ok.map(c=>`<div class="slot${L[lSlot]==c.id?' sel':''}" style="--rc:${RAR[c.rar].c}" data-id="${c.id}">${portrait(c.id)}<span class="nmb">${shortN(c.name)}</span></div>`).join('')+`<div class="slot inv2" data-id="-1">🎲</div>`;
  $$('#lgrid .slot').forEach(e=>e.onclick=()=>{const id=+e.dataset.id;if(id>=0)for(let i=0;i<3;i++)if(L[i]==id)L[i]=-1;L[lSlot]=id;store();renderLineup()});mountPreviews($('#lslots'))}
 $('#b-3v3').onclick=()=>{if(!save.lineup||save.lineup.length!==3)save.lineup=lineupAuto();lSlot=0;renderLineup();show('#lineup')};
 $('#l-auto').onclick=()=>{save.lineup=lineupAuto();renderLineup()};
@@ -45,7 +45,7 @@ function openTeam(){tSel=save.sel;renderTeam();show('#team')}
 function renderTeam(){
  const owned=Object.keys(save.owned).length;$('#tCount').textContent=`${owned}/${CH.length}`;
  const list=CH.filter(c=>save.owned[c.id]).sort((a,b)=>b.rar-a.rar||a.id-b.id);if(!save.owned[tSel])tSel=save.sel;
- $('#grid').innerHTML=list.map(c=>{const o=save.owned[c.id];return`<div class="slot${tSel==c.id?' sel':''}${save.sel==c.id?' cur':''}" style="--rc:${RAR[c.rar].c}" data-id="${c.id}">${portrait(c.id)}<span class="lvb">★${o.st}</span></div>`}).join('');
+ $('#grid').innerHTML=list.map(c=>{const o=save.owned[c.id];return`<div class="slot${tSel==c.id?' sel':''}${save.sel==c.id?' cur':''}" style="--rc:${RAR[c.rar].c}" data-id="${c.id}">${portrait(c.id)}<span class="nmb">${shortN(c.name)}</span></div>`}).join('');
  $$('#grid .slot').forEach(e=>e.onclick=()=>{tSel=+e.dataset.id;renderTeam()});
  const c=CH[tSel],o=save.owned[tSel];let h='';
  if(o){h=cardHTML(tSel,o);{const k=h.indexOf('class="lv"'),e=h.indexOf('</div>',k)+6;h=h.slice(0,e)+hatRow(tSel)+h.slice(e)}
@@ -65,7 +65,7 @@ function gShow(){const{c,r}=gres[gi],R=RAR[c.rar],card=$('#gcard');
  const o=save.owned[c.id];
  $('#gfront').style.setProperty('--rc',R.c);$('#gfront').parentElement.style.setProperty('--rc',R.c);
  const s=statsOf(c.id,o.lvl,o.st);
- $('#gfront').innerHTML=`<canvas width="300" height="300" data-id="${c.id}" data-col="${c.jc}"></canvas><div class="nm">${c.name}</div><div class="rr">★ ${R.k} · ${c.pos} · ${PWN[c.pw]||c.pw} · ${c.title||ARN[c.arch]}</div><div style="font-size:7px;color:#cde">OVR ${ovrOf(s)}</div>${r.isNew?'<div class="new">¡NUEVO!</div>':r.star?'<div class="new" style="color:#ffe45c">¡COPIA! +1★ (+${Math.round(STB*100)}% stats)</div>':`<div class="new" style="color:#ffb347">Copia máx → +${r.coins}🪙</div>`}`;
+ $('#gfront').innerHTML=`<canvas width="300" height="300" data-id="${c.id}" data-col="${c.jc}"></canvas><div class="nm">${c.name}</div><div class="rr">★ ${R.k} · ${c.pos} · ${PWN[c.pw]||c.pw} · ${c.title||ARN[c.arch]}</div><div style="font-size:7px;color:#cde">OVR ${ovrOf(s)}</div>${r.isNew?'<div class="new">¡NUEVO!</div>':r.star?'<div class="new" style="color:#ffe45c">¡COPIA! +1★ (+'+Math.round(STB*100)+'% stats)</div>':`<div class="new" style="color:#ffb347">Copia máx → +${r.coins}🪙</div>`}`;
  mountPreviews($('#gfront'));card.classList.add('shake');gstate='back';$('#g-next').classList.add('hidden');
  $('#gtip').textContent=gres.length>1?`Carta ${gi+1}/${gres.length} · ¡Tócala!`:'¡Toca la carta!'}
 $('#gcard').onclick=()=>{if(gstate!=='back')return;gstate='front';const c=gres[gi].c;$('#gcard').classList.remove('shake');$('#gcard').classList.add('flip');
