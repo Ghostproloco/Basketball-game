@@ -10,11 +10,11 @@
 window.FIREBASE_CONFIG = null;
 /* Ejemplo:
 window.FIREBASE_CONFIG = {
-  apiKey: "AIza...",
-  authDomain: "tu-proyecto.firebaseapp.com",
-  projectId: "tu-proyecto",
-  storageBucket: "tu-proyecto.appspot.com",
-  messagingSenderId: "1234567890",
-  appId: "1:1234567890:web:abcdef"
+  apiKey: "AIzaSyA1_xBZueUYcAQc9Zocs0F-6As2iPdEvSI",
+  authDomain: "basketball-game-of.firebaseapp.com",
+  projectId: "basketball-game-of",
+  storageBucket: "basketball-game-of.firebasestorage.app",
+  messagingSenderId: "194551816970",
+  appId: "1:194551816970:web:3056ed6634cd329c4590f3"
 };
 */
