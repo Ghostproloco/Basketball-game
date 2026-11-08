@@ -15,8 +15,7 @@ function menuFx(){const cv=$('#mcv');if(!cv||menuFx.on)return;menuFx.on=true;con
   const fl=g.createLinearGradient(0,H*.7,0,H);fl.addColorStop(0,'#4d2412');fl.addColorStop(1,'#b8631f');g.fillStyle=fl;g.fillRect(0,H*.7,W,H*.3);g.strokeStyle='#ffffff22';g.lineWidth=2;
   for(let i=-8;i<=8;i++){g.beginPath();g.moveTo(W/2+i*W*.02,H*.7);g.lineTo(W/2+i*W*.16,H);g.stroke()}for(let k=1;k<6;k++){const y=H*.7+H*.3*Math.pow(k/6,1.6);g.beginPath();g.moveTo(0,y);g.lineTo(W,y);g.stroke()}
   g.globalCompositeOperation='lighter';for(const p of P){p.y-=p.v;p.x+=Math.sin(t*.02+p.p)*.0006;if(p.y<-.05){p.y=1.05;p.x=Math.random()}g.fillStyle=p.c;g.globalAlpha=.55;g.beginPath();g.arc(p.x*W,p.y*H,p.s*H*.004+1,0,7);g.fill()}g.globalAlpha=1;g.globalCompositeOperation='source-over'})()}
-function unlockAll(){for(const c of CH)if(!c.hide&&!save.owned[c.id])save.owned[c.id]={lvl:1,st:0};store()}
-function renderMenu(){if(window.TEST_ALL)unlockAll();store();fillMenu();show('#menu');menuFx();musicPlay('menu')}
+function renderMenu(){store();fillMenu();show('#menu');menuFx();musicPlay('menu')}
 $('#b-play').onclick=()=>{curDiff=1;curMode=1;beginVs()};
 $('#b-gacha').onclick=()=>{gReset();show('#gacha');store()};
 $('#b-team').onclick=()=>{backTo='menu';openTeam()};
@@ -50,7 +49,7 @@ function renderTeam(){
  $$('#grid .slot').forEach(e=>e.onclick=()=>{tSel=+e.dataset.id;renderTeam()});
  const c=CH[tSel],o=save.owned[tSel];let h='';
  if(o){h=cardHTML(tSel,o);{const k=h.indexOf('class="lv"'),e=h.indexOf('</div>',k)+6;h=h.slice(0,e)+hatRow(tSel)+h.slice(e)}
-  h+=`<div class="dbtns"><button class="btn main" id="d-sel" ${save.sel==tSel?'disabled':''}>${save.sel==tSel?'✓ ELEGIDO':'ELEGIR'}</button></div><div style="font-size:7px;color:#9ad;text-align:center;line-height:1.7">${o.st>=MAXST?'★ MÁXIMO · las copias dan monedas':'Si te toca otra vez en un sobre sube a ★'+(o.st+1)+' (+6% a todos los stats)'}</div>`}
+  h+=`<div class="dbtns"><button class="btn main" id="d-sel" ${save.sel==tSel?'disabled':''}>${save.sel==tSel?'✓ ELEGIDO':'ELEGIR'}</button></div><div style="font-size:7px;color:#9ad;text-align:center;line-height:1.7">${o.st>=MAXST?'★ MÁXIMO · las copias dan monedas':'Si te toca otra vez en un sobre sube a ★'+(o.st+1)+' (+'+Math.round(STB*100)+'% a todos los stats)'}</div>`}
  else h=`<div class="pcard" style="--rc:${RAR[c.rar].c}"><div class="nm">???</div><div class="rr">★ ${RAR[c.rar].k} · ${c.pos} · ${PWN[c.pw]||c.pw} · ${c.title||ARN[c.arch]}</div><div class="lv" style="line-height:1.8">No lo tienes todavía.<br>¡Consíguelo en el Gacha!</div></div>`;
  $('#detail').innerHTML=h;mountPreviews($('#detail'));
  const ds=$('#d-sel');if(ds)ds.onclick=()=>{save.sel=tSel;store();renderTeam()};const dh=$('#d-hat');if(dh)dh.onclick=()=>openHatPick(tSel);
@@ -66,7 +65,7 @@ function gShow(){const{c,r}=gres[gi],R=RAR[c.rar],card=$('#gcard');
  const o=save.owned[c.id];
  $('#gfront').style.setProperty('--rc',R.c);$('#gfront').parentElement.style.setProperty('--rc',R.c);
  const s=statsOf(c.id,o.lvl,o.st);
- $('#gfront').innerHTML=`<canvas width="300" height="300" data-id="${c.id}" data-col="${c.jc}"></canvas><div class="nm">${c.name}</div><div class="rr">★ ${R.k} · ${c.pos} · ${PWN[c.pw]||c.pw} · ${c.title||ARN[c.arch]}</div><div style="font-size:7px;color:#cde">OVR ${ovrOf(s)}</div>${r.isNew?'<div class="new">¡NUEVO!</div>':r.star?'<div class="new" style="color:#ffe45c">¡COPIA! +1★ (+6% stats)</div>':`<div class="new" style="color:#ffb347">Copia máx → +${r.coins}🪙</div>`}`;
+ $('#gfront').innerHTML=`<canvas width="300" height="300" data-id="${c.id}" data-col="${c.jc}"></canvas><div class="nm">${c.name}</div><div class="rr">★ ${R.k} · ${c.pos} · ${PWN[c.pw]||c.pw} · ${c.title||ARN[c.arch]}</div><div style="font-size:7px;color:#cde">OVR ${ovrOf(s)}</div>${r.isNew?'<div class="new">¡NUEVO!</div>':r.star?'<div class="new" style="color:#ffe45c">¡COPIA! +1★ (+${Math.round(STB*100)}% stats)</div>':`<div class="new" style="color:#ffb347">Copia máx → +${r.coins}🪙</div>`}`;
  mountPreviews($('#gfront'));card.classList.add('shake');gstate='back';$('#g-next').classList.add('hidden');
  $('#gtip').textContent=gres.length>1?`Carta ${gi+1}/${gres.length} · ¡Tócala!`:'¡Toca la carta!'}
 $('#gcard').onclick=()=>{if(gstate!=='back')return;gstate='front';const c=gres[gi].c;$('#gcard').classList.remove('shake');$('#gcard').classList.add('flip');
@@ -105,7 +104,7 @@ const gtabs=t=>'';
 function bindPacks(){$$('#gpk .pk[data-i]').forEach(b=>b.onclick=()=>gOpen(+b.dataset.i));$$('#gpk .pk[data-h]').forEach(b=>b.onclick=()=>openHatPack(+b.dataset.h));$$('#gpk .gtabs button').forEach(b=>b.onclick=()=>{gTab=b.dataset.t;renderPacks()})}
 function renderHatPacks(){$('#gpk').innerHTML=gtabs('h')+`<div class="pkrow">`+HPACKS.map((p,i)=>packCard(i,p,PKC[[0,1,2][i]],`${p.cnt} gorro${p.cnt>1?'s':''}${p.min?' · mín. '+RAR[p.min].k:''}`,true)).join('')+`</div><div class="hnote">Común 58% · Raro 28% · Épico 11% · Legendario 3% · los épicos y legendarios tienen efectos ✨ · repetidos dan monedas</div>`;bindPacks()}
 function renderPacks(){gTab='p';
- const pc=x=>(+(LEGP*x*100).toFixed(2))+'%',ps=PACKS.filter(p=>!p.welcome);
+ const pc=x=>(+(LEGP*x*100).toFixed(3))+'%',ps=PACKS.filter(p=>!p.welcome);
  const SN={56:'Okonkwo',57:'Jaimes',58:'Kuro',59:'Long',60:'Brandon',61:'Sael',62:'Milan',63:'Darío',64:'Benito'};
  const leg=`<div id="gleg"><div class="glt">⭐ 9 LEYENDAS ULTRA RARAS · prob. por carta de cada una: ${ps.map(p=>p.e+pc(p.lm)).join(' ')}</div><div class="glr">${SPEC.map(id=>`<div class="gl" style="--c:${RCOL[CH[id].pw]}"><img src="${figImg(id,CH[id].jc)}"><b>${SN[id]}</b></div>`).join('')}</div></div>`;
  const wel=save.welcome?packCard(4,PACKS[4],PKC[4],`${PACKS[4].cnt} jugadores · todos ${RAR[2].k}`,false):'';
@@ -169,23 +168,41 @@ function applyBtn(){const r=document.documentElement;r.style.removeProperty('--k
  const bop=save.cfg.bop==null?1:save.cfg.bop;r.style.setProperty('--bo',[.12,.22,.36,.6][bop]);const c=$('#controls');if(c)c.classList.toggle('mono',save.cfg.bcol!==1)}
 function applyAudio(){if(save.snd&&cfgv('mus'))musicPlay(MUS.tr);else musicStop();$('#b-snd').textContent=save.snd?'🔊':'🔇'}
 addEventListener('resize',applyBtn);
-function renderSet(){$('#setlist').innerHTML=SETROWS.map(([k,l,c])=>{const on=c?cfgv(k):!!save.snd;return`<button class="setrow${on?' on':''}" data-k="${k}" data-c="${c}"><span>${l}</span><b>${on?'SÍ':'NO'}</b></button>`}).join('')+`<button class="setrow on" id="set-stad"><span>🏟 Estadio</span><b>${(save.cfg.stad||0)>=STADS.length?'ALEATORIO':STADS[save.cfg.stad||0].n}</b></button>`+`<button class="setrow" id="set-all"><span>🔓 Desbloquear todos (pruebas)</span><b>${Object.keys(save.owned).length>=CH.length?'LISTO':'TOCA'}</b></button>`+(document.fullscreenEnabled?`<button class="setrow on" id="set-fs"><span>⛶ Pantalla completa</span><b>ACTIVAR</b></button>`:'')+`<button class="setrow on" id="set-bst"><span>🎨 Estilo de botones</span><b>${save.cfg.bcol===1?'COLORES':'TRANSPARENTE'}</b></button><button class="setrow on" id="set-bop"><span>◐ Transparencia</span><b>${['MUY ALTA','ALTA','MEDIA','BAJA'][save.cfg.bop==null?1:save.cfg.bop]}</b></button><div class="setrow dev"><span>${IS_MOBILE?'📱':'🖥'} Dispositivo detectado</span><b>${IS_MOBILE?'MÓVIL':'ORDENADOR'}</b></div>`+`<button class="setrow on" id="set-btn"><span>🎮 Tamaño de botones</span><b>${['PEQUEÑO','NORMAL','GRANDE'][bsz()]}</b></button>`;
+function renderSet(){$('#setlist').innerHTML=SETROWS.map(([k,l,c])=>{const on=c?cfgv(k):!!save.snd;return`<button class="setrow${on?' on':''}" data-k="${k}" data-c="${c}"><span>${l}</span><b>${on?'SÍ':'NO'}</b></button>`}).join('')+`<button class="setrow on" id="set-stad"><span>🏟 Estadio</span><b>${(save.cfg.stad||0)>=STADS.length?'ALEATORIO':STADS[save.cfg.stad||0].n}</b></button>`+(document.fullscreenEnabled?`<button class="setrow on" id="set-fs"><span>⛶ Pantalla completa</span><b>ACTIVAR</b></button>`:'')+`<button class="setrow on" id="set-bst"><span>🎨 Estilo de botones</span><b>${save.cfg.bcol===1?'COLORES':'TRANSPARENTE'}</b></button><button class="setrow on" id="set-bop"><span>◐ Transparencia</span><b>${['MUY ALTA','ALTA','MEDIA','BAJA'][save.cfg.bop==null?1:save.cfg.bop]}</b></button><div class="setrow dev"><span>${IS_MOBILE?'📱':'🖥'} Dispositivo detectado</span><b>${IS_MOBILE?'MÓVIL':'ORDENADOR'}</b></div>`+`<button class="setrow on" id="set-btn"><span>🎮 Tamaño de botones</span><b>${['PEQUEÑO','NORMAL','GRANDE'][bsz()]}</b></button>`;
  $$('#setlist .setrow[data-k]').forEach(b=>b.onclick=()=>{const k=b.dataset.k;if(b.dataset.c==='0')save.snd=save.snd?0:1;else save.cfg[k]=cfgv(k)?0:1;store();applyAudio();renderSet()});
  const sfs=$('#set-fs');if(sfs)sfs.onclick=()=>toggleFS();
  $('#set-bst').onclick=()=>{save.cfg.bcol=save.cfg.bcol===1?0:1;store();applyBtn();renderSet()};
  $('#set-bop').onclick=()=>{save.cfg.bop=((save.cfg.bop==null?1:save.cfg.bop)+1)%4;store();applyBtn();renderSet()};
  $('#set-stad').onclick=()=>{save.cfg.stad=((save.cfg.stad||0)+1)%(STADS.length+1);store();renderSet()};
- $('#set-all').onclick=()=>{unlockAll();renderSet()};
- $('#set-btn').onclick=()=>{save.cfg.btn=(bsz()+1)%3;store();applyBtn();renderSet()}}
+  $('#set-btn').onclick=()=>{save.cfg.btn=(bsz()+1)%3;store();applyBtn();renderSet()}}
 $('#b-set').onclick=()=>{renderSet();show('#settings')};
 $('#set-acc').onclick=()=>{renderAcc();show('#account')};
 $('#set-back').onclick=()=>renderMenu();
 addEventListener('pagehide',()=>{try{FBX.flush()}catch(e){}});
 // ---- pausa ----
+
+// ---- banquillo (3 vs 3) ----
+let bSel=null;
+const enCol=e=>e>=60?'#34d399':e>=30?'#fbbf24':'#ef4444';
+const benchPort=(id,col)=>`<div class="bnp">${portrait(id,1,col)}</div>`;
+const shortN=n=>n.length>11?n.slice(0,10)+'…':n;
+function renderBench(){const el=$('#bench'),box=$('#pbox');
+ if(!G||G.n!==3){el.classList.add('hidden');box.classList.remove('wide');return}
+ box.classList.add('wide');el.classList.remove('hidden');
+ const court=G.P.slice(0,3),sug=suggestSubs(),ids=benchIds().sort((a,b)=>CH[b].rar-CH[a].rar||ovrOf(statsOf(b,1,save.owned[b].st))-ovrOf(statsOf(a,1,save.owned[a].st)));
+ const tired=court.filter(p=>p.en<30).length;
+ const cc=court.map((p,k)=>{const R=RAR[CH[p.id].rar],ov=ovrOf(p.s);return`<div class="bcc${bSel&&bSel.k===k?' on':''}${p.en<30?' tired':''}" data-k="${k}" style="--rc:${R.c}">${benchPort(p.id,G.mc)}<div class="bci"><b>${shortN(p.name)}</b><small>${CH[p.id].pos} · OVR ${ov}</small><div class="ebar"><i style="width:${Math.round(p.en)}%;background:${enCol(p.en)}"></i></div><small class="ens">${p.en<30?'😮‍💨 CANSADO':'⚡ '+Math.round(p.en)+'%'}</small></div></div>`}).join('');
+ const bc=ids.map(id=>{const R=RAR[CH[id].rar],e=benchEn(id),ov=ovrOf(statsOf(id,1,save.owned[id].st));return`<div class="bbc${bSel&&bSel.id===id?' on':''}" data-id="${id}" style="--rc:${R.c}">${benchPort(id,G.mc)}<b>${shortN(CH[id].name)}</b><small>${CH[id].pos} · ${ov}</small><div class="ebar"><i style="width:${Math.round(e)}%;background:${enCol(e)}"></i></div></div>`}).join('');
+ const sg=sug.length?`<div class="bsug"><div class="bsh">💡 CAMBIOS SUGERIDOS${tired?' · ¡hay jugadores cansados!':''}</div>${sug.map(x=>`<button class="btn small bsb" data-k="${x.k}" data-id="${x.id}">${shortN(G.P[x.k].name)} <span>😮‍💨${Math.round(G.P[x.k].en)}%</span> ⇄ ${shortN(CH[x.id].name)} <span>⚡${Math.round(benchEn(x.id))}%</span></button>`).join('')}</div>`:`<div class="bsug ok"><div class="bsh">✅ Tu quinteto está fresco</div></div>`;
+ el.innerHTML=`<div class="bcol"><div class="bt">🏀 EN CANCHA</div>${cc}</div><div class="bcol bwide"><div class="bt">🪑 BANQUILLO <small>${ids.length} jugador${ids.length==1?'':'es'}</small></div>${sg}<div class="bgrid">${bc||'<small class="bemp">No tienes más jugadores. ¡Abre sobres para ampliar tu banca!</small>'}</div><div class="bhint">${bSel?'Elige con quién cambiarlo':'Toca un jugador de la cancha y luego uno del banquillo'}</div></div>`;
+ $$('#bench .bcc').forEach(e=>e.onclick=()=>{const k=+e.dataset.k;if(bSel&&bSel.id!=null){if(doSub(k,bSel.id)){bSel=null}renderBench();return}bSel=bSel&&bSel.k===k?null:{k};renderBench()});
+ $$('#bench .bbc').forEach(e=>e.onclick=()=>{const id=+e.dataset.id;if(bSel&&bSel.k!=null){if(doSub(bSel.k,id))bSel=null;renderBench();return}bSel=bSel&&bSel.id===id?null:{id};renderBench()});
+ $$('#bench .bsb').forEach(e=>e.onclick=()=>{doSub(+e.dataset.k,+e.dataset.id);bSel=null;renderBench()});
+ mountPreviews(el)}
 function toggleFS(){try{if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen()}catch(e){}}
 const PKEYS=['skT','pwT','bst','twr','gho','reb','lck','sh','nst'];
-function pauseOn(){if(!G||G.mode==='end'||G.paused)return;G.paused=true;G.pAt=performance.now();$('#pause').classList.remove('hidden');$('#p-snd').textContent=save.snd?'🔊 SONIDO: SÍ':'🔇 SONIDO: NO';$('#p-fs').style.display=document.fullscreenEnabled?'':'none'}
-function pauseOff(){if(G&&G.paused){const d=performance.now()-G.pAt;for(const p of G.P)for(const k of PKEYS)if(p[k]>0)p[k]+=d;G.paused=false}$('#pause').classList.add('hidden');const q=$('#p-quit');q.dataset.s='';q.textContent='↩ SALIR AL MENÚ'}
+function pauseOn(){if(!G||G.mode==='end'||G.paused)return;G.paused=true;G.pAt=performance.now();bSel=null;renderBench();$('#pause').classList.remove('hidden');$('#p-snd').textContent=save.snd?'🔊 SONIDO: SÍ':'🔇 SONIDO: NO';$('#p-fs').style.display=document.fullscreenEnabled?'':'none'}
+function pauseOff(){if(G&&G.paused){bSel=null;const d=performance.now()-G.pAt;for(const p of G.P)for(const k of PKEYS)if(p[k]>0)p[k]+=d;G.paused=false}$('#pause').classList.add('hidden');const q=$('#p-quit');q.dataset.s='';q.textContent='↩ SALIR AL MENÚ'}
 $('#pbtn').onclick=pauseOn;$('#p-res').onclick=pauseOff;$('#p-fs').onclick=toggleFS;
 $('#p-snd').onclick=()=>{save.snd=save.snd?0:1;store();applyAudio();$('#p-snd').textContent=save.snd?'🔊 SONIDO: SÍ':'🔇 SONIDO: NO'};
 $('#p-quit').onclick=e=>{const b=e.currentTarget;if(b.dataset.s!=='1'){b.dataset.s='1';b.textContent='¿SEGURO? TOCA OTRA VEZ';return}pauseOff();G=null;$('#hud').classList.add('hidden');$('#controls').classList.add('hidden');renderMenu()};
@@ -205,6 +222,7 @@ startMatch3=function(){pickStad(()=>_sm3())};
 $('#b-again').onclick=()=>{$('#end').classList.add('hidden');STAD_SKIP=true;curMode===3?(show(null),startMatch3()):beginVs()};
 // ---- novedades ----
 const NEWS=[
+ {v:'v17',t:'Banquillo, energía y nuevo balance',d:'8 nov 2026',n:['🔄 3 vs 3: pulsa ⏸ para ver tu formación y cambiar jugadores con tu banquillo','⚡ Energía: correr, el turbo y tirar cansan; un jugador cansado va más lento y falla más. Los del banquillo recuperan','💡 Cambios sugeridos cuando alguien se cansa','📉 Estadísticas rebajadas: Legendarios 80-95 de overall, Épicos ~65, Raros ~55, Comunes ~45. Nadie llega a 100','🎯 Los triples son mucho más difíciles, sobre todo para los Épicos','👑 Los 9 legendarios son aún más raros en los sobres','🔒 Se quita el modo de desbloquear todos los jugadores'],f:[]},
  {v:'v16',t:'Solo 9 legendarios',d:'8 nov 2026',n:['⭐ Los únicos legendarios son los 9 de los sobres ultra raros','🔁 Los demás personajes que eran legendarios (Electro Blue, Ghost Frost, Mega Afro, Rosa Neón, Lima Rayo y Capitán Parche) pasan a Épico'],f:[]},
  {v:'v15',t:'Marcador centrado y sin gorros',d:'8 nov 2026',n:['📍 El marcador vuelve al centro de la pantalla','🧢 Se quitan los gorros del juego','👥 Vuelven al juego los jugadores que llevaban gorro dibujado'],f:['🛠 El marcador se desplazaba hacia la derecha en móvil']},
  {v:'v14',t:'Gran actualización: móvil, perfil y estadios',d:'7 nov 2026',n:['⏸ Pausa en los partidos con opción de salir al menú','🏀 Bandeja: cerca del aro el botón TIRAR se convierte en BANDEJA','📊 Estadísticas al terminar el partido y nuevo PERFIL con tu jugador más usado y tus puntos totales','🏟 Elige estadio antes de cada partido (1 vs 1 y 3 vs 3)','📦 Sobres rediseñados y resumen del sobre más claro','👕 Camisetas con rayas, bandas, mitades y más diseños','🤖 IA mejorada en 3 vs 3: usa todo el campo, ayuda en defensa, corre al contraataque y pasa mejor','📱 Móvil: vibración, pantalla completa, aviso para girar el móvil y HUD más cómodo','✏ Nombres de los legendarios cambiados','📰 Esta ventana de NOVEDADES'],f:['🛠 El resumen del sobre ya no se superpone con el título']},
