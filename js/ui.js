@@ -205,7 +205,7 @@ function pauseOn(){if(!G||G.mode==='end'||G.paused)return;G.paused=true;G.pAt=pe
 function pauseOff(){if(G&&G.paused){bSel=null;const d=performance.now()-G.pAt;for(const p of G.P)for(const k of PKEYS)if(p[k]>0)p[k]+=d;G.paused=false}$('#pause').classList.add('hidden');const q=$('#p-quit');q.dataset.s='';q.textContent='↩ SALIR AL MENÚ'}
 $('#pbtn').onclick=pauseOn;$('#p-res').onclick=pauseOff;$('#p-fs').onclick=toggleFS;
 $('#p-snd').onclick=()=>{save.snd=save.snd?0:1;store();applyAudio();$('#p-snd').textContent=save.snd?'🔊 SONIDO: SÍ':'🔇 SONIDO: NO'};
-$('#p-quit').onclick=e=>{const b=e.currentTarget;if(b.dataset.s!=='1'){b.dataset.s='1';b.textContent='¿SEGURO? TOCA OTRA VEZ';return}pauseOff();G=null;$('#hud').classList.add('hidden');$('#controls').classList.add('hidden');renderMenu()};
+$('#p-quit').onclick=e=>{const b=e.currentTarget;if(b.dataset.s!=='1'){b.dataset.s='1';b.textContent='¿SEGURO? TOCA OTRA VEZ';return}pauseOff();G=null;$('#hud').classList.add('hidden');$('#controls').classList.add('hidden');if(window.careerQuit&&window.careerQuit())return;renderMenu()};
 document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseOn()});
 addEventListener('keydown',e=>{if(e.target&&/INPUT|TEXTAREA/.test(e.target.tagName))return;if(e.code==='Escape'||e.code==='KeyP'){G&&G.paused?pauseOff():pauseOn()}});
 setInterval(()=>{const on=!!G&&G.mode!=='end'&&!$('#hud').classList.contains('hidden');$('#pbtn').classList.toggle('hidden',!on)},300);

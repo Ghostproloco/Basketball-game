@@ -131,9 +131,10 @@ function drawFig(g,fn,x,y,sc,flip,col,hid,ball,bpos,gt,dr,cyp){
  g.drawImage(IM.heads,(hid%HM.cols)*HM.cw,((hid/HM.cols)|0)*HM.ch,HM.cw,HM.ch,-HM.ax,-HM.ay,HM.cw,HM.ch);g.restore();
  if(bb){let by=bb[1],bx=bb[0];if(dr!=null){const fl=-bb[2];by=fl+(bb[1]-fl)*dr[0];bx+=dr[1]*(1-dr[0])}ballImg(g,bx,by,bb[2])}g.restore()}
 // ---- helpers de UI ----
-const figC={};
-function figImg(id,col){col=col||CH[id].jc;const k=id+'|'+col;if(figC[k])return figC[k];const c=mkc(176,196),g=c.getContext('2d');
- drawRigFig(g,88,192,.72,1,col,id,{mv:false,gait:0,cy:0,an:0,ball:false,dr:null,def:false});return figC[k]=c.toDataURL()}
+const figC={},figK={};
+function figCanvas(id,col){col=col||CH[id].jc;const k=id+'|'+col;if(figK[k])return figK[k];const c=mkc(176,196),g=c.getContext('2d');
+ drawRigFig(g,88,192,.72,1,col,id,{mv:false,gait:0,cy:0,an:0,ball:false,dr:null,def:false});return figK[k]=c}
+function figImg(id,col){col=col||CH[id].jc;const k=id+'|'+col;if(figC[k])return figC[k];return figC[k]=figCanvas(id,col).toDataURL()}
 const portrait=(id,sc=1,col)=>`<div class="hd" style="background-image:url(${figImg(id,col)});background-size:100% 100%;${sc!=1?`transform:scale(${sc});transform-origin:top left;`:''}"></div>`;
 function hudPortrait(el,id,col){el.style.backgroundImage=`url(${figImg(id,col)})`;el.style.backgroundRepeat='no-repeat';el.style.backgroundSize='auto 190%';el.style.backgroundPosition='50% 6%'}
 const prevs=[];
