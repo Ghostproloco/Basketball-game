@@ -19,6 +19,7 @@ const ARCH={def:[9,14,19,29,39,55,44],vel:[1,5,15,30,40,22],tir:[4,3,33,13,8,35]
 const ARN={tir:'Tirador',vol:'Volador',vel:'Velocista',reg:'Manejador',def:'Muro',all:'Completo'};
 const PAL=['#e63946','#2f6fe4','#f4c20d','#1fa35c','#8e44ad','#ff7a00','#14b8a6','#ec4899','#262b36','#f2f2f2','#1b2a6b','#8b1e3f','#7bd33c','#3fb5ff'];
 function mul32(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const hdi=id=>CH[id]&&CH[id].hd!=null?CH[id].hd:id;
 const POSM={C:{vel:-12,tir:-6,mat:10,reg:-12,def:10},PF:{vel:-5,tir:-2,mat:7,reg:-8,def:6},SF:{vel:0,tir:2,mat:2,reg:0,def:0},SG:{vel:3,tir:9,mat:-4,reg:2,def:-5},PG:{vel:8,tir:3,mat:-9,reg:10,def:-4}},POW={C:['MURO','TERREMOTO'],PF:['TOMAHAWK','CAÑON'],SF:['RAYO','ESCUDO'],SG:['STEPBACK','FUEGO'],PG:['TURBO','CRUCE']},HGT={C:1.14,PF:1.08,SF:1.02,SG:.97,PG:.93};
 const CH=NAMES.map((name,id)=>{
  const rar=LEG.includes(id)?3:EPI.includes(id)?2:RARE.includes(id)?1:0;
@@ -83,7 +84,7 @@ const PACKS=[{n:'SOBRE BÁSICO',cost:100,cnt:1,min:0,b:0,e:'📦',lm:1},{n:'SOBR
 const SPEC=[56,57,58,59,60,61,62,63,64],LEGP=.00015; // los 9 legendarios: solo por probabilidad ultra baja (0.015% cada uno por carta x multiplicador del sobre)
 function rollGacha(minR=0,b=0,pk={}){if(!pk.nl)for(const id of SPEC)if(rnd()<LEGP*(pk.lm||1))return CH[id];
  const mx=pk.max==null?2:pk.max,W=RAR.map((r,i)=>(i<minR||i>mx)?0:r.w*(i==0?1-b:1+b*i*1.5)),TT=W.reduce((a,c)=>a+c,0);let x=rnd()*TT,ri=0;for(let i=0;i<W.length;i++){if(x<W[i]){ri=i;break}x-=W[i]}
- const pool=CH.filter(c=>c.rar==ri&&!SPEC.includes(c.id)&&!c.hide);return pool.length?pool[rnd()*pool.length|0]:CH[rnd()*50|0]}
+ const pool=CH.filter(c=>c.rar==ri&&!c.hide&&!SPEC.includes(c.id)&&!c.hide);return pool.length?pool[rnd()*pool.length|0]:CH[rnd()*50|0]}
 function grantChar(c){ // devuelve {isNew,coins,star}
  const o=save.owned[c.id];
  if(!o){save.owned[c.id]={lvl:1,st:0};return{isNew:true}}

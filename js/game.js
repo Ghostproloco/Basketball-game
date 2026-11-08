@@ -35,12 +35,12 @@ let S=1,offY=0,dpr=1;
 function resize(){dpr=Math.min(2.5,devicePixelRatio||1);cv.width=Math.round(innerWidth*dpr);cv.height=Math.round(innerHeight*dpr)}
 addEventListener('resize',resize);resize();
 const IM={};
-function loadImgs(){return Promise.all(['stadium.jpg','stad1.jpg','stad2.jpg','body.png','jersey.png','skin.png','heads.png','ball.png'].map(n=>new Promise(r=>{const i=new Image();i.onload=()=>r();i.onerror=()=>r();i.src='assets/'+n;IM[n.split('.')[0]]=i})))}
+function loadImgs(){return Promise.all(['stadium.jpg','neon.jpg','stad1.jpg','stad2.jpg','body.png','jersey.png','skin.png','heads.png','ball.png'].map(n=>new Promise(r=>{const i=new Image();i.onload=()=>r();i.onerror=()=>r();i.src='assets/'+n;IM[n.split('.')[0]]=i})))}
 // ---- sprites ----
 const mkc=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c};
 const skinCache={};
 function skinOf(id){if(skinCache[id])return skinCache[id];let col='#d9a070';
- try{const c=mkc(HM.cw,HM.ch),g=c.getContext('2d');g.drawImage(IM.heads,(id%HM.cols)*HM.cw,((id/HM.cols)|0)*HM.ch,HM.cw,HM.ch,0,0,HM.cw,HM.ch);
+ try{const c=mkc(HM.cw,HM.ch),g=c.getContext('2d');g.drawImage(IM.heads,(hdi(id)%HM.cols)*HM.cw,((hdi(id)/HM.cols)|0)*HM.ch,HM.cw,HM.ch,0,0,HM.cw,HM.ch);
   const d=g.getImageData(HM.ax-15,HM.ay-50,30,22).data,R=[],G=[],B=[];
   for(let i=0;i<d.length;i+=4){if(d[i+3]<200)continue;const m=(d[i]+d[i+1]+d[i+2])/3;if(m<80||m>240||d[i]<d[i+1])continue;R.push(d[i]);G.push(d[i+1]);B.push(d[i+2])}
   const md=a=>a.sort((x,y)=>x-y)[a.length>>1];if(R.length>20)col=`rgb(${md(R)},${md(G)},${md(B)})`}catch(e){}
@@ -654,8 +654,9 @@ const STADS=[
  {k:'arena',n:'ARENA',img:'stadium',hx:[366,2210],by:660,sb:1,cr:[[400,390,990,760],[1010,390,1575,760],[1600,390,2175,760],[0,520,200,800],[2380,520,2576,800]]},
  {k:'azotea',n:'AZOTEA NOCTURNA',img:'stad1',warp:1,hx:[410,2176],by:700,sb:0,cr:[[1370,650,1680,870],[1700,420,1980,570],[2250,60,2490,180],[2290,290,2440,420]].map(wr4)},
  {k:'calle',n:'CALLE ATARDECER',img:'stad2',warp:1,hx:[410,2176],by:700,sb:2,cr:[[640,490,1170,760],[1440,480,1990,760],[1190,410,1420,570],[700,430,820,520]].map(wr4)}];
+STADS.push({k:'neon',n:'ARENA NEÓN',img:'neon',hx:[366,2210],by:660,sb:1,cr:STADS[0].cr,hide:1});
 const STC={},ST=()=>STADS[G&&G.stx||0];
-function stadImg(){const i=G&&G.stx||0,S=STADS[i];if(!S.warp)return IM.stadium;if(STC[i])return STC[i];const im=IM[S.img];if(!im||!im.complete||!im.naturalWidth)return IM.stadium;
+function stadImg(){const i=G&&G.stx||0,S=STADS[i];if(!S.warp)return IM[S.img]||IM.stadium;if(STC[i])return STC[i];const im=IM[S.img];if(!im||!im.complete||!im.naturalWidth)return IM.stadium;
  const c=mkc(LW,LH),g=c.getContext('2d');g.imageSmoothingEnabled=true;const W=im.naturalWidth;
  g.drawImage(im,0,0,W,6,0,0,LW,204);const gr=g.createLinearGradient(0,0,0,204);gr.addColorStop(0,'rgba(0,0,0,.6)');gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.fillRect(0,0,LW,204);
  g.drawImage(im,0,0,W,590,0,202,LW,590);g.drawImage(im,0,590,W,430,0,792,LW,298);g.drawImage(im,0,1020,W,418,0,1090,LW,348);STC[i]=c;return c}
