@@ -55,3 +55,23 @@
 .m2grid .tile{height:clamp(62px,15vh,104px)!important}
 @media (max-height:430px){.m2dock{padding:3px 6px}.m2dock button{padding:3px 2px}.m2brand span,.m2brand b{font-size:11px}}
 @media (orientation:portrait){.m2hero{height:clamp(110px,18vh,160px)}.m2grid{grid-template-columns:repeat(2,1fr)}.m2grid .tile{height:clamp(84px,13vh,112px)!important}.m2grid .tile.play{grid-column:span 2}.m2hero .logo2{display:none}.m2stats{flex-direction:row}}
+/* ===== v19: todo cabe en pantalla sin arrastrar (móvil horizontal y vertical) ===== */
+#menu .m2main{overflow:hidden}
+@media (orientation:landscape){
+ .m2main{gap:clamp(4px,1.2vh,10px)}
+ .m2hero{height:clamp(44px,15vh,96px)!important}
+ .m2hero .logo2{transform:scale(.55);margin:-26px -34px}
+ .m2stats{display:none}
+ .m2grid{flex:1;min-height:0;grid-template-columns:repeat(4,1fr)!important;grid-template-rows:repeat(2,minmax(0,1fr));gap:clamp(5px,1.4vh,12px)}
+ .m2grid .tile{height:auto!important;min-height:0;padding:2px}
+ .m2grid .tile .ti{font-size:clamp(18px,5vh,36px)}
+ .m2grid .tile.play{grid-column:span 2}
+ .m2grid .tile.evt .bdg{top:3px;right:4px}
+}
+@media (orientation:landscape) and (max-height:340px){.m2hero{display:none}.m2grid .tile small{display:none}.m2top{gap:4px}.m2dock button{font-size:5px}}
+@media (orientation:portrait){
+ .m2main{overflow-y:auto}
+ .m2grid .tile.play{order:0}.m2grid .tile:not(.play):not(.evt):not(.mode3):not(.pack):not(.team):not(.clan){order:1}
+ .m2grid .tile.evt{order:2}.m2grid .tile.mode3{order:3}.m2grid .tile.pack{order:4}.m2grid .tile.team{order:5}.m2grid .tile.clan{order:6}
+ .m2hero{height:clamp(70px,11vh,110px)!important}.m2grid .tile{height:clamp(70px,10.5vh,100px)!important}
+}
