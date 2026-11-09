@@ -1,0 +1,57 @@
+/* ===== Menú principal 2.0 ===== */
+#menu{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:clamp(6px,1.6vh,14px);padding:max(8px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));overflow:hidden;background:#070924}
+#menu #mcv{display:none}
+.m2bg{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:linear-gradient(125deg,#1a0f52,#0b1a6b 35%,#4b1a8a 65%,#0a2a6a);background-size:300% 300%;animation:m2g 16s ease-in-out infinite}
+@keyframes m2g{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.m2bg::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 110%,#ff7a0055,transparent 55%),url(../assets/stadium.jpg) center/cover;opacity:.28;mix-blend-mode:screen}
+.m2bg i{position:absolute;bottom:-60px;font-style:normal;opacity:.18;animation:m2f linear infinite;filter:blur(.4px)}
+@keyframes m2f{to{transform:translateY(-120vh) rotate(540deg)}}
+.m2top{position:relative;z-index:2;flex:none;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.m2brand{display:flex;align-items:baseline;gap:6px;font-family:'Press Start 2P',monospace;margin-right:auto}
+.m2brand span{font-size:clamp(11px,2.6vh,16px);color:#ffd23d;text-shadow:0 2px 0 #7a3b00,0 0 14px #ffb40088}.m2brand b{font-size:clamp(11px,2.6vh,16px);color:#fff;text-shadow:0 2px 0 #2a1a80}
+.m2brand em{font-style:normal;display:inline-block;animation:m2b 1.6s ease-in-out infinite}
+@keyframes m2b{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-4px) rotate(25deg)}}
+.m2chips{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.m2chips .coins.big{margin:0;font-size:clamp(9px,2.1vh,12px)}
+.m2usr{display:flex;align-items:center;gap:4px;padding:6px 10px;border-radius:12px;background:#0d1240cc;border:2px solid #4a5ad8;font:9px 'Press Start 2P',monospace;max-width:34vw;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.m2stats{display:flex;gap:6px}
+.m2stats span{display:flex;align-items:center;gap:4px;padding:4px 8px;border-radius:10px;background:#0d124099;border:1px solid #4a5ad866;font:8px 'Press Start 2P',monospace}
+.m2main{position:relative;z-index:2;flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:clamp(8px,1.8vh,14px);padding:2px 2px 6px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.m2hero{flex:none;display:flex;align-items:center;gap:clamp(10px,3vw,30px);justify-content:center;min-height:clamp(86px,22vh,170px);animation:m2in .7s both}
+.m2hero .logo2{transform:scale(.92)}
+#menu #mlegs{max-height:clamp(86px,24vh,170px);height:auto}
+.m2grid{flex:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(clamp(112px,22vw,170px),1fr));gap:clamp(8px,1.6vw,14px);padding:0 2px}
+.m2grid .tile{width:auto!important;height:clamp(78px,17vh,118px)!important;border-radius:18px;opacity:0;animation:m2in .55s cubic-bezier(.2,1.3,.4,1) forwards;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;position:relative;overflow:hidden;border:3px solid #ffffff88}
+.m2grid .tile:nth-child(1){animation-delay:.05s}.m2grid .tile:nth-child(2){animation-delay:.12s}.m2grid .tile:nth-child(3){animation-delay:.19s}.m2grid .tile:nth-child(4){animation-delay:.26s}.m2grid .tile:nth-child(5){animation-delay:.33s}.m2grid .tile:nth-child(6){animation-delay:.4s}.m2grid .tile:nth-child(7){animation-delay:.47s}.m2grid .tile:nth-child(8){animation-delay:.54s}
+@keyframes m2in{from{opacity:0;transform:translateY(22px) scale(.92)}to{opacity:1;transform:none}}
+.m2grid .tile .ti{font-size:clamp(22px,5.6vh,40px);transition:transform .25s}.m2grid .tile:hover .ti{transform:scale(1.18) rotate(-6deg)}
+.m2grid .tile b{font-size:clamp(9px,2vh,13px)}.m2grid .tile small{font:clamp(6px,1.4vh,8px) system-ui,sans-serif;opacity:.9}
+.m2grid .tile.play{grid-column:span 2;background:linear-gradient(150deg,#ffd23d,#ff7a00 70%);color:#2a1100;border-color:#fff;animation:m2in .55s .05s both,mpl 2.2s 1s ease-in-out infinite}
+.m2grid .tile.mode3{background:linear-gradient(150deg,#3be08a,#0b6a3c)}
+.m2grid .tile.pack{background:linear-gradient(150deg,#c05cff,#4a1aa0)}.m2grid .tile.team{background:linear-gradient(150deg,#4aa8ff,#1a3fa0)}
+.m2grid .tile.evt{background:linear-gradient(150deg,#58d63a,#0d4a1a 75%);color:#eaffea;animation:m2in .55s .4s both,evg 2.4s 1s ease-in-out infinite}
+@keyframes evg{50%{box-shadow:0 0 24px #7dff5a,0 6px 0 #0006}}
+.m2grid .tile.clan{background:linear-gradient(150deg,#ff5a8a,#8a1a4a)}
+.m2grid .tile.evt .ti{filter:drop-shadow(0 0 8px #7dff5a)}
+.tile .bdg{position:absolute;top:6px;right:6px;padding:2px 6px;border-radius:8px;background:#ff3b3b;color:#fff;font:7px 'Press Start 2P',monospace;animation:m2b 1.2s infinite}
+.m2dock{position:relative;z-index:3;flex:none;display:flex;gap:6px;justify-content:center;padding:6px;border-radius:18px;background:#0b0f3ccc;border:2px solid #4a5ad899;backdrop-filter:blur(6px);overflow-x:auto;-webkit-overflow-scrolling:touch;animation:m2in .6s .3s both}
+.m2dock button{flex:1 0 auto;min-width:clamp(46px,9vw,70px);display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;border:0;border-radius:12px;background:transparent;color:#cfd8ff;font:6px 'Press Start 2P',monospace;transition:transform .15s,background .2s;position:relative}
+.m2dock button span{font-size:clamp(16px,3.6vh,22px);transition:transform .2s}
+.m2dock button:hover,.m2dock button:active{background:#2a3a9a88;transform:translateY(-3px)}.m2dock button:active span{transform:scale(1.3) rotate(-8deg)}
+.m2dock i#newsdot{position:absolute;top:2px;right:8px}
+.m2dock .ver{align-self:center;font-size:6px;opacity:.5;padding:0 4px}
+/* ---- perfiles y clanes: botón cerrar siempre visible ---- */
+#spro .px{position:fixed;top:max(8px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));z-index:5;width:44px;height:44px;border-radius:50%;border:3px solid #fff;background:linear-gradient(#ff5a5a,#b01a1a);color:#fff;font:16px system-ui,sans-serif;font-weight:900;box-shadow:0 4px 14px #000a;animation:m2in .3s both}
+#spro .box{max-height:calc(100dvh - 24px);overscroll-behavior:contain;-webkit-overflow-scrolling:touch;animation:m2in .35s both}
+#spro{align-items:center;overflow:auto}
+#social{overflow:hidden}
+#social .m2cls{flex:none}
+/* ajustes de altura (móvil horizontal) */
+.m2hero{min-height:0!important;height:clamp(70px,21vh,140px);overflow:hidden}
+.m2hero .logo2{transform:scale(.72);transform-origin:center;flex:none;margin:-14px -22px}
+.m2stats{flex-direction:column;flex:none}
+#menu #mlegs{height:100%!important;max-height:none!important;align-items:center}
+#menu #mlegs .lg{height:100%}
+.m2grid .tile{height:clamp(62px,15vh,104px)!important}
+@media (max-height:430px){.m2dock{padding:3px 6px}.m2dock button{padding:3px 2px}.m2brand span,.m2brand b{font-size:11px}}
+@media (orientation:portrait){.m2hero{height:clamp(110px,18vh,160px)}.m2grid{grid-template-columns:repeat(2,1fr)}.m2grid .tile{height:clamp(84px,13vh,112px)!important}.m2grid .tile.play{grid-column:span 2}.m2hero .logo2{display:none}.m2stats{flex-direction:row}}
