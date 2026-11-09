@@ -22,7 +22,7 @@
 
 <section id="menu" class="screen hidden">
  <canvas id="mcv"></canvas>
- <div class="mtop"><div class="brand">🏀 GACHA HOOPS</div><div class="mstats"><span>🎮 <b id="mPl">0</b></span><span>🏆 <b id="mWi">0</b></span><span>👥 <b id="mRo">0</b></span><span>👤 <b id="mUser">-</b></span></div><div class="coins big">🪙 <span class="cn">0</span></div></div>
+ <div class="mtop"><div class="brand">🏀 GACHA HOOPS</div><div class="mstats"><span>🎮 <b id="mPl">0</b></span><span>🏆 <b id="mWi">0</b></span><span>👥 <b id="mRo">0</b></span><span>👤 <b id="mUser">-</b></span></div><div class="coins big">🪙 <span class="cn">0</span></div><div class="coins big gems">💎 <span class="gm">0</span></div></div>
  <div class="mhero2"><div class="logo2"><div class="ball2">🏀</div><span class="l1">GACHA</span><span class="l2">HOOPS</span><div class="ltag">BALONCESTO CALLEJERO</div></div><div id="mlegs"></div></div>
  <div class="mtiles">
   <button class="tile play" id="b-play"><span class="ti">🏀</span><b>JUGAR</b><small>1 vs 1 en la calle</small></button>
@@ -30,7 +30,7 @@
   <button class="tile pack" id="b-gacha"><span class="ti">📦</span><b>SOBRES</b><small>Consigue jugadores</small></button>
   <button class="tile team" id="b-team"><span class="ti">⭐</span><b>EQUIPO</b><small>Elige y mejora</small></button>
  </div>
- <div class="mfoot"><button class="btn small" id="b-how">❓ CÓMO JUGAR</button><button class="btn small" id="b-news">📰 NOVEDADES<i id="newsdot"></i></button><button class="btn small" id="b-prof">📊 PERFIL</button><button class="btn small" id="b-set">⚙ AJUSTES</button><button class="btn small" id="b-acc">👤 CUENTA</button><button class="btn small" id="b-snd">🔊</button><span class="ver">v17</span></div>
+ <div class="mfoot"><button class="btn small" id="b-how">❓ CÓMO JUGAR</button><button class="btn small" id="b-news">📰 NOVEDADES<i id="newsdot"></i></button><button class="btn small" id="b-prof">📊 PERFIL</button><button class="btn small" id="b-set">⚙ AJUSTES</button><button class="btn small" id="b-clan">🛡 CLANES</button><button class="btn small" id="b-find">🔎 BUSCAR</button><button class="btn small" id="b-acc">👤 CUENTA</button><button class="btn small" id="b-mus">🎵</button><button class="btn small" id="b-snd">🔊</button><span class="ver">v17</span></div>
 </section>
 
 <section id="pick" class="screen hidden">
@@ -131,9 +131,9 @@
 <section id="end" class="screen hidden"><h2 id="eT"></h2><div id="eS"></div><div id="eC"></div><div id="eStats"></div>
  <button class="btn main" id="b-again">🔁 REVANCHA</button><button class="btn" id="b-menu">MENÚ</button></section>
 <script src="js/crest.js"></script><script src="js/data.js"></script><script src="js/roster.js"></script><script src="js/hats.js"></script>
-<script src="js/game.js"></script><script src="js/firebase-config.js"></script>
+<script src="js/game.js"></script><script src="js/music.js"></script><script src="js/firebase-config.js"></script>
 <script src="js/auth.js"></script>
-<script src="js/ui.js"></script><script src="js/career.js"></script><style>*{touch-action:manipulation!important}html,body,canvas,#controls,#controls *{touch-action:none!important}</style>
+<script src="js/social.js"></script><script src="js/ui.js"></script><script src="js/career.js"></script><style>*{touch-action:manipulation!important}html,body,canvas,#controls,#controls *{touch-action:none!important}</style>
 <script>
 /* sin zoom por doble toque / pellizco en iPhone */
 let _lt=0;document.addEventListener('touchend',e=>{const n=Date.now(),t=e.target;if(n-_lt<350&&t&&t.closest&&(t.closest('#controls')||t.id==='gameCanvas'))e.preventDefault();_lt=n},{passive:false});

@@ -15,12 +15,36 @@ Con `js/firebase-config.js` en `null` funciona en **modo demo** (cuentas solo en
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // progreso privado de cada jugador
     match /users/{uid} {
       allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+    // perfil público (lo pueden ver los demás jugadores y el buscador)
+    match /profiles/{uid} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == uid;
+    }
+    // nombres únicos (un documento por nombre en minúsculas)
+    match /usernames/{name} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow delete: if request.auth != null && resource.data.uid == request.auth.uid;
+    }
+    // clanes creados por jugadores
+    match /clans/{id} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.resource.data.leader == request.auth.uid;
+      allow update, delete: if request.auth != null;
+      match /members/{uid} {
+        allow read: if request.auth != null;
+        allow write: if request.auth != null;
+      }
     }
   }
 }
 ```
+**IMPORTANTE:** hay que pegar estas reglas nuevas en la consola de Firebase (Firestore -> Reglas -> Publicar),
+si no, los clanes, el buscador, los perfiles y los nombres únicos darán error de permisos.
 7. Sube la carpeta a **Firebase Hosting** (`firebase init hosting` y `firebase deploy`) o a cualquier hosting https.
 
 ## Login con Google
