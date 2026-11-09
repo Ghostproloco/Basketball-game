@@ -22,7 +22,7 @@ $('#b-gacha').onclick=()=>{gReset();show('#gacha');store()};
 $('#b-team').onclick=()=>{backTo='menu';openTeam()};
 $('#b-change').onclick=()=>{backTo='pick';openTeam()};
 $('#b-how').onclick=()=>show('#how');
-$('#b-snd').onclick=()=>{save.snd=save.snd?0:1;$('#b-snd').textContent=save.snd?'🔊':'🔇';store();save.snd?musicPlay(MUS.tr):musicStop()};
+$('#b-snd').onclick=()=>{save.snd=save.snd?0:1;$('#b-snd span').textContent=save.snd?'🔊':'🔇';store();save.snd?musicPlay(MUS.tr):musicStop()};
 $$('[data-back]').forEach(b=>b.onclick=()=>show('#menu'));
 $('#t-back').onclick=()=>{if(backTo==='pick'){$('#b-play').onclick()}else renderMenu()};
 $('#g-back').onclick=()=>renderMenu();
@@ -133,9 +133,9 @@ async function enterAccount(u,isNew,carry){let d=null;
  d.name=u.name;adoptSave(d,'gh3_'+u.uid);localStorage.removeItem('gh_guest');store();
  try{if(window.ensureName)await ensureName(u,!!save.welcome,$('#a-name')&&authTab==='up'?$('#a-name').value.trim():'')}catch(e){console.warn(e)}
  try{await FBX.saveNow(save)}catch(e){}
- applyBtn();$('#b-snd').textContent=save.snd?'🔊':'🔇';
+ applyBtn();$('#b-snd span').textContent=save.snd?'🔊':'🔇';
  if(save.welcome){gReset();show('#gacha');$('#gtip').textContent='🎁 ¡Bienvenido! Abre tu SOBRE ÉPICO GRATIS de 10 jugadores'}else renderMenu()}
-function startGuest(){let d=null;try{d=JSON.parse(localStorage.getItem('gh3'))}catch(e){}adoptSave(d&&d.owned?d:newSave(),'gh3');localStorage.setItem('gh_guest','1');FBX.user=null;applyBtn();$('#b-snd').textContent=save.snd?'🔊':'🔇';renderMenu()}
+function startGuest(){let d=null;try{d=JSON.parse(localStorage.getItem('gh3'))}catch(e){}adoptSave(d&&d.owned?d:newSave(),'gh3');localStorage.setItem('gh_guest','1');FBX.user=null;applyBtn();$('#b-snd span').textContent=save.snd?'🔊':'🔇';renderMenu()}
 $('#at-in').onclick=()=>setTab('in');$('#at-up').onclick=()=>setTab('up');
 $('#a-go').onclick=async()=>{if(busy)return;const email=$('#a-mail').value.trim().toLowerCase(),pass=$('#a-pass').value,name=$('#a-name').value.trim();
  if(!/^\S+@\S+\.\S+$/.test(email))return amsg('Escribe un correo válido');if(pass.length<6)return amsg('La contraseña debe tener mínimo 6 caracteres');
@@ -169,7 +169,7 @@ const IS_MOBILE=(window.matchMedia&&matchMedia('(pointer:coarse)').matches)||/An
 const bsz=()=>save.cfg&&save.cfg.btn!=null?save.cfg.btn:(IS_MOBILE?0:1);
 function applyBtn(){const r=document.documentElement;r.style.removeProperty('--k');const b=parseFloat(getComputedStyle(r).getPropertyValue('--k'))||1;r.style.setProperty('--k',b*[.85,1,1.2][bsz()]);
  const bop=save.cfg.bop==null?1:save.cfg.bop;r.style.setProperty('--bo',[.12,.22,.36,.6][bop]);const c=$('#controls');if(c)c.classList.toggle('mono',save.cfg.bcol!==1)}
-function applyAudio(){if(save.snd&&cfgv('mus'))musicPlay(MUS.tr);else musicStop();$('#b-snd').textContent=save.snd?'🔊':'🔇'}
+function applyAudio(){if(save.snd&&cfgv('mus'))musicPlay(MUS.tr);else musicStop();$('#b-snd span').textContent=save.snd?'🔊':'🔇'}
 addEventListener('resize',applyBtn);
 function renderSet(){$('#setlist').innerHTML=SETROWS.map(([k,l,c])=>{const on=c?cfgv(k):!!save.snd;return`<button class="setrow${on?' on':''}" data-k="${k}" data-c="${c}"><span>${l}</span><b>${on?'SÍ':'NO'}</b></button>`}).join('')+`<button class="setrow on" id="set-stad"><span>🏟 Estadio</span><b>${(save.cfg.stad||0)>=STADS.length?'ALEATORIO':STADS[save.cfg.stad||0].n}</b></button>`+(document.fullscreenEnabled?`<button class="setrow on" id="set-fs"><span>⛶ Pantalla completa</span><b>ACTIVAR</b></button>`:'')+`<button class="setrow on" id="set-bst"><span>🎨 Estilo de botones</span><b>${save.cfg.bcol===1?'COLORES':'TRANSPARENTE'}</b></button><button class="setrow on" id="set-bop"><span>◐ Transparencia</span><b>${['MUY ALTA','ALTA','MEDIA','BAJA'][save.cfg.bop==null?1:save.cfg.bop]}</b></button><div class="setrow dev"><span>${IS_MOBILE?'📱':'🖥'} Dispositivo detectado</span><b>${IS_MOBILE?'MÓVIL':'ORDENADOR'}</b></div>`+`<button class="setrow on" id="set-btn"><span>🎮 Tamaño de botones</span><b>${['PEQUEÑO','NORMAL','GRANDE'][bsz()]}</b></button>`;
  $$('#setlist .setrow[data-k]').forEach(b=>b.onclick=()=>{const k=b.dataset.k;if(b.dataset.c==='0')save.snd=save.snd?0:1;else save.cfg[k]=cfgv(k)?0:1;store();applyAudio();renderSet()});
@@ -225,6 +225,7 @@ startMatch3=function(){pickStad(()=>_sm3())};
 $('#b-again').onclick=()=>{$('#end').classList.add('hidden');STAD_SKIP=true;curMode===3?(show(null),startMatch3()):beginVs()};
 // ---- novedades ----
 const NEWS=[
+ {v:'v18',t:'Invasión alienígena y 10 nuevos jugadores',d:'9 nov 2026',n:['👽 EVENTO ALIEN: derrota a Zorg, Blip y Xark (3 aliens) para ganar un 🎟 TICKET y canjearlo por Víctor Wamba, el pívot alienígena','🧑‍🦲 Calvo Karusso (ÉPICO, 75 de media) ¡de regalo para todos! Además te guía en el tutorial','⭐ Nuevos legendarios en sobres ultra raros: Luko Dómnik (stepback y magia), Tyrone Halbert (visión de juego), Lamar Bell (showtime y logo 3), Antón Edmonds (explosión atómica), Kyro Irwin (combos de regate) y Yanis Anteto (eurostep dunk, no tira triples)','🛸 Víctor Wamba: se transforma en alien, mata desde muy lejos y hasta de espaldas','🎓 Tutorial inicial paso a paso: mover, tirar, regatear, saltar, mates y poderes','🎨 Menú nuevo con animaciones y botones mejor organizados','🎵 Música de menú, 💎 gemas, 🛡 clanes, perfiles y búsqueda, carrera con redes, vestuario y retos'],f:['🛠 Los clanes y los perfiles ya se pueden cerrar con el botón fijo arriba','🛠 En carrera tus compañeros son IA y deciden si te pasan según la confianza']},
  {v:'v17',t:'Banquillo, energía y nuevo balance',d:'8 nov 2026',n:['🔄 3 vs 3: pulsa ⏸ para ver tu formación y cambiar jugadores con tu banquillo','⚡ Energía: correr, el turbo y tirar cansan; un jugador cansado va más lento y falla más. Los del banquillo recuperan','💡 Cambios sugeridos cuando alguien se cansa','📉 Estadísticas rebajadas: Legendarios 80-95 de overall, Épicos ~65, Raros ~55, Comunes ~45. Nadie llega a 100','🎯 Los triples son mucho más difíciles, sobre todo para los Épicos','👑 Los 9 legendarios son aún más raros en los sobres','🔒 Se quita el modo de desbloquear todos los jugadores'],f:[]},
  {v:'v16',t:'Solo 9 legendarios',d:'8 nov 2026',n:['⭐ Los únicos legendarios son los 9 de los sobres ultra raros','🔁 Los demás personajes que eran legendarios (Electro Blue, Ghost Frost, Mega Afro, Rosa Neón, Lima Rayo y Capitán Parche) pasan a Épico'],f:[]},
  {v:'v15',t:'Marcador centrado y sin gorros',d:'8 nov 2026',n:['📍 El marcador vuelve al centro de la pantalla','🧢 Se quitan los gorros del juego','👥 Vuelven al juego los jugadores que llevaban gorro dibujado'],f:['🛠 El marcador se desplazaba hacia la derecha en móvil']},
@@ -245,5 +246,5 @@ function renderProfile(){const c=save.career,own=Object.keys(save.owned).length,
 $('#b-prof').onclick=()=>{renderProfile();show('#profile')};$('#pf-back').onclick=()=>renderMenu();
 // ---- arranque ----
 requestAnimationFrame(loop);
-Promise.all([loadImgs(),window.bootWait?bootWait(5000):0]).then(async()=>{$('#b-snd').textContent=save.snd?'🔊':'🔇';applyBtn();let u=null,fe=null;try{u=await FBX.init()}catch(e){fe=e;console.warn(e)}
+Promise.all([loadImgs(),window.bootWait?bootWait(5000):0]).then(async()=>{$('#b-snd span').textContent=save.snd?'🔊':'🔇';applyBtn();let u=null,fe=null;try{u=await FBX.init()}catch(e){fe=e;console.warn(e)}
  if(u)await enterAccount(u,false);else if(localStorage.getItem('gh_guest'))startGuest();else{showAuth();if(fe)amsg('No se pudo conectar con Firebase. Revisa tu configuración o juega como invitado.')}});

@@ -42,7 +42,7 @@ FBX.pubHook=sv=>{const u=FBX.user;if(!u)return null;const rar=[0,0,0,0];for(cons
  return{uid:u.uid,name:u.name,nameLower:low(u.name),clanId:sv.clan?sv.clan.id:'',clanName:sv.clan?sv.clan.name:'',clanTag:sv.clan?sv.clan.tag:'',played:sv.played||0,wins:sv.wins||0,owned:Object.keys(sv.owned).length,total:CH.length,sel:sv.sel,rar,career:window.CAREER_PUB?window.CAREER_PUB(sv):null}};
 /* ---------- datos de clanes ---------- */
 const sec=document.createElement('section');sec.id='social';sec.className='screen hidden';document.body.appendChild(sec);
-const pro=document.createElement('div');pro.id='spro';pro.className='hidden';document.body.appendChild(pro);
+const pro=document.createElement('div');pro.id='spro';pro.className='hidden';document.body.appendChild(pro);new MutationObserver(()=>{if(!pro.querySelector('.px'))pro.insertAdjacentHTML('afterbegin','<button class="px" data-s="pclose">✕</button>')}).observe(pro,{childList:true});pro.addEventListener('click',e=>{if(e.target===pro)pro.classList.add('hidden')});
 let TAB='mine',BUSY=false,ICON='🛡';
 const ICONS=['🛡','🔥','⚡','🐉','🦅','🐺','👑','💀','🚀','🌪','🏆','⭐','🦁','🐍','🎯','💎'];
 const err=e=>{console.warn(e);const c=e&&e.code||'';return /permission/i.test(c+e.message)?'Faltan las reglas de Firestore para clanes (mira README_FIREBASE.md)':(e&&e.message)||'Error de conexión'};
