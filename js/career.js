@@ -15,8 +15,9 @@ const INT=[{n:'SUAVE',e:6,m:.7,r:0},{n:'NORMAL',e:10,m:1,r:0},{n:'INTENSO',e:16,
 const BDG=[{k:'tir',e:'🎯',n:'Francotirador',d:'Puntería 70+: +3 en partido'},{k:'vel',e:'⚡',n:'Cohete',d:'Explosión 70+: +3 en partido'},{k:'def',e:'🧱',n:'Muro',d:'Muro 70+: +3 en partido'},{k:'reb',e:'🦍',n:'Imán de rebotes',d:'Garra 70+: +3 en partido'},{k:'reg',e:'🪄',n:'Mago del balón',d:'Manejo 70+: +3 en partido'},{k:'mat',e:'💥',n:'Matador',d:'Al aro 70+: +3 en partido'},{k:'agu',e:'🫀',n:'Pulmones',d:'Aguante 75+: +3 en partido'}];
 const r=(a,b)=>a+Math.floor(Math.random()*(b-a+1)),pick=a=>a[r(0,a.length-1)],cl=(v,a,b)=>Math.max(a,Math.min(b,v)),avg=a=>a.reduce((x,y)=>x+y,0)/(a.length||1),shuf=a=>a.slice().sort(()=>Math.random()-.5);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let C=null;try{C=JSON.parse(localStorage.getItem(KEY))}catch(e){}if(C&&(!C.p||!C.t))C=null;
-const persist=()=>{try{localStorage.setItem(KEY,JSON.stringify(C))}catch(e){}};
+let C=null;
+function loadC(){let c=save.cr&&save.cr.p&&save.cr.t?save.cr:null;if(!c&&!save.crh){try{const o=JSON.parse(localStorage.getItem(KEY));if(o&&o.p&&o.t){c=o;save.cr=c;localStorage.removeItem(KEY);store()}}catch(e){}}C=c}
+const persist=()=>{try{if(C){save.cr=C;store()}}catch(e){}};
 /* restos de un partido que se cortó (cierre del navegador) */
 try{const tm=JSON.parse(localStorage.getItem(TMPK));if(tm){(tm.added||[]).forEach(i=>delete save.owned[i]);if(tm.sel!=null&&save.owned[tm.sel])save.sel=tm.sel;save.lineup=tm.lineup||null;localStorage.removeItem(TMPK);store()}}catch(e){}
 const slotOf=p=>p=='PG'||p=='SG'?0:p=='SF'?1:2,ov=id=>ovrOf(statsOf(id,1,0));
@@ -31,12 +32,13 @@ const form=()=>Math.round(((.9+.1*C.en/100)*(.94+.06*C.mor/100)-1)*100);
 function migrate(){if(!C)return;C.v=3;
  C.tot=Object.assign({g:0,pts:0,reb:0,ast:0,stl:0,blk:0,w:0,l:0,street:0,streetW:0,press:0,titles:0,best:0,maxp:0,dbl:0,derby:0},C.tot||{});
  C.ach=C.ach||{};C.res=C.res||[];C.streak=C.streak||0;C.bst=C.bst||0;C.aw=C.aw||[];C.cons=C.cons||0;C.own=C.own||{};C.hist=C.hist||[];C.log=C.log||[];
- if(C.p.num==null)C.p.num=r(1,99);if(!C.p.sty)C.p.sty='eq';if(C.bd==null)C.bd=divOf(C.myT);if(C.rival==null)setRival();if(C.phase==null)C.phase='hub'}
+ if(C.p.num==null)C.p.num=r(1,99);if(!C.p.sty)C.p.sty='eq';if(C.bd==null)C.bd=divOf(C.myT);if(C.rival==null)setRival();if(C.phase==null)C.phase='hub';
+ C.rel=C.rel||{};if(C.sa==null)C.sa=3;if(C.pa==null)C.pa=2;if(!C.sn){const b=100+(C.fame||0)*30;C.sn={ig:{f:Math.round(b)},yt:{f:Math.round(b*.2)},tt:{f:Math.round(b*.7)},x:{f:Math.round(b*.4)}}}C.mer=C.mer||0;C.sm=C.sm||[];C.inbox=C.inbox||[];C.chat=C.chat||[];C.mvp=C.mvp||0}
 function setRival(){const d=divOf(C.myT),c=C.dv[d].filter(t=>t!==C.myT);C.rival=c.length?pick(c):null}
 /* ---- mi jugador usa la cara/personaje de un ÉPICO (se aplica solo durante el partido) ---- */
 let ORIG=null;
 function clearFig(id){Object.keys(figC).forEach(k=>{if(k.startsWith(id+'|'))delete figC[k]});Object.keys(figK).forEach(k=>{if(k.startsWith(id+'|'))delete figK[k]})}
-function effBase(){const m=(.9+.1*C.en/100)*(.94+.06*C.mor/100)*(1+(C.buff||0)),b={},bd=badgesOf(C.p.st).map(x=>x.k);for(const k of SKS)b[k]=cl(Math.round(C.p.st[k]*m)+(bd.includes(k)?3:0),20,99);return b}
+function effBase(){const m=(.9+.1*C.en/100)*(.94+.06*C.mor/100)*(1+(C.buff||0)+chemB()),b={},bd=badgesOf(C.p.st).map(x=>x.k);for(const k of SKS)b[k]=cl(Math.round(C.p.st[k]*m)+(bd.includes(k)?3:0),20,99);return b}
 function applyMe(col){const c=CH[C.p.cid];ORIG={id:c.id,name:c.name,h:c.h,base:c.base,jc:c.jc,b8:c.b8};c.name=C.p.name;c.h=.9+(C.p.cm-170)/55*.4;c.base=effBase();c.jc=col;delete c.b8;clearFig(c.id)}
 function restoreMe(){if(!ORIG)return;const c=CH[ORIG.id];Object.assign(c,{name:ORIG.name,h:ORIG.h,base:ORIG.base,jc:ORIG.jc});if(ORIG.b8)c.b8=ORIG.b8;else delete c.b8;clearFig(c.id);ORIG=null}
 /* ---- liga con los personajes del juego ---- */
@@ -106,11 +108,11 @@ function paint(root){root.querySelectorAll('canvas[data-fig]').forEach(c=>{try{c
 const toastC=t=>{try{toast(t)}catch(e){}},log=t=>{C.log.push(t);if(C.log.length>30)C.log.shift()},pay=n=>{C.money=Math.max(0,C.money+n)};
 const bar=(l,v,c)=>`<div class="chip">${l}<i><u style="width:${cl(v,0,100)}%;background:${c}"></u></i></div>`;
 function hideHud(){$('#hud').classList.add('hidden');$('#controls').classList.add('hidden')}
-function openHub(){hideHud();if(!C)return create();migrate();if(C.phase==='offers')return offers();show('#career');draw()}
+function openHub(){hideHud();loadC();if(!C)return create();migrate();if(C.phase==='offers')return offers();show('#career');draw()}
 function draw(){const old=$('#cbody'),sc=old&&DTAB===TAB?old.scrollTop:0,t=C.t[C.myT],d=divOf(C.myT),R=C.fx[d].length;
- sec.innerHTML=`<div class="chd">${logo(C.myT,42)}<div><b>${t.n}</b><small style="color:${DC[d]}">DIV. ${DN[d]} · Temp ${C.season} · Jornada ${Math.min(C.rd+1,R)}/${R}${C.inj>0?' · 🩹 lesionado':''}</small></div><div class="chips">${bar('⚡ ENERGÍA',C.en,'#4ade80')}${bar('😊 MORAL',C.mor,'#ffb23d')}${bar('🤝 MÍSTER',C.trust,'#5aa0ff')}<div class="chip">📣 FAMA<b>${C.fame}</b></div><div class="chip">💰 DINERO<b>${C.money}</b></div></div></div>
- <div class="tabs">${[['home','🏠 INICIO'],['liga','🏆 LIGA'],['team','👥 EQUIPO'],['me','🧍 YO'],['train','💪 ENTRENO'],['shop','🛒 TIENDA'],['ach','🏅 LOGROS'],['prensa','📰 PRENSA']].map(([k,l])=>`<button data-a="tab" data-v="${k}" class="${TAB==k?'on':''}">${l}</button>`).join('')}<button data-a="exit" style="flex:.4">⏏ MENÚ</button></div><div id="cbody"></div>`;
- ({home:vHome,liga:vLiga,team:vTeam,me:vMe,train:vTrain,shop:vShop,ach:vAch,prensa:vPrensa})[TAB]($('#cbody'));paint(sec);const nb=$('#cbody');if(nb)nb.scrollTop=sc;DTAB=TAB}
+ sec.innerHTML=`<div class="chd">${logo(C.myT,42)}<div><b>${t.n}</b><small style="color:${DC[d]}">DIV. ${DN[d]} · Temp ${C.season} · Jornada ${Math.min(C.rd+1,R)}/${R}${C.inj>0?' · 🩹 lesionado':''} · 🎂 ${C.p.age} años</small></div><div class="chips">${bar('⚡ ENERGÍA',C.en,'#4ade80')}${bar('😊 MORAL',C.mor,'#ffb23d')}${bar('🤝 MÍSTER',C.trust,'#5aa0ff')}<div class="chip">📣 FAMA<b>${C.fame}</b></div><div class="chip">💶 VALOR<b>${fmt(mv())}</b></div><div class="chip">💰 DINERO<b>${C.money}</b></div></div></div>
+ <div class="tabs">${[['home','🏠 INICIO'],['liga','🏆 LIGA'],['team','👥 EQUIPO'],['me','🧍 YO'],['train','💪 ENTRENO'],['shop','🛒 TIENDA'],['ach','🏅 LOGROS'],['vest','🗣 VESTUARIO'],['soc','📱 REDES'],['prensa','📰 PRENSA']].map(([k,l])=>`<button data-a="tab" data-v="${k}" class="${TAB==k?'on':''}">${l}</button>`).join('')}<button data-a="exit" style="flex:.4">⏏ MENÚ</button></div><div id="cbody"></div>`;
+ ({home:vHome,liga:vLiga,team:vTeam,me:vMe,train:vTrain,shop:vShop,ach:vAch,prensa:vPrensa,vest:vVest,soc:vSoc})[TAB]($('#cbody'));if(TAB==='home')p2home($('#cbody'));if(TAB==='me')p2me($('#cbody'));paint(sec);const nb=$('#cbody');if(nb)nb.scrollTop=sc;DTAB=TAB}
 ACT.tab=v=>{TAB=v;draw()};ACT.exit=()=>{persist();LIVE=null;sec.classList.add('hidden');renderMenu()};
 /* ---- calendario ---- */
 function nextFx(){const d=divOf(C.myT),R=C.fx[d][C.rd];
@@ -175,7 +177,7 @@ const ACH=[
 {id:'el',e:'🥇',n:'Llegaste a la Élite',d:'Juega en la División Élite',f:()=>C.bd<=0,rw:2000},
 {id:'ch',e:'🏆',n:'Campeón',d:'Gana unos playoffs',f:()=>C.tot.titles>=1,rw:3000},
 {id:'ce',e:'👑',n:'Rey de la Élite',d:'Gana los playoffs de la Élite',f:()=>C.hist.some(h=>h.c),rw:6000}];
-function checkAch(){if(!C)return;C.bd=Math.min(C.bd==null?2:C.bd,divOf(C.myT));const got=[];for(const a of ACH)if(!C.ach[a.id]&&a.f()){C.ach[a.id]=C.season;if(a.rw)pay(a.rw);if(a.fame)C.fame+=a.fame;got.push(a);log(`🏅 Logro: ${a.n}`)}
+function checkAch(){if(!C)return;C.bd=Math.min(C.bd==null?2:C.bd,divOf(C.myT));const got=[];for(const a of ACH)if(!C.ach[a.id]&&a.f()){C.ach[a.id]=C.season;if(a.rw){pay(a.rw);gem(Math.max(1,Math.round(a.rw/400)),'por un logro')}if(a.fame)C.fame+=a.fame;got.push(a);log(`🏅 Logro: ${a.n}`)}
  if(got.length)toastC('🏅 '+got.map(a=>a.n).join(' · ')+'  ¡Logro!')}
 /* ---- acciones ---- */
 function grow(k,n=1){const p=C.p;if(p.st[k]>=p.pot||p.st[k]>=99)return false;p.st[k]=Math.min(p.pot,p.st[k]+n);return true}
@@ -212,7 +214,7 @@ function startCar(fx,co){const my=C.t[C.myT],op=C.t[fx.opp],cid=C.p.cid,k=slotOf
   sec.classList.add('hidden');show(null);
   window.NOPICK=1;try{startMatch3()}finally{window.NOPICK=0}   /* sin selector de estadio: antes dejaba el partido a medias y se quedaba pillado */
   if(!G)throw new Error('startMatch3 no creó el partido');
-  G.diff=DDIF[divOf(fx.opp)];G.hu=G.P[st?k:0];hudPortrait($('#hpL'),G.hu.id,G.mc);$('#nL').textContent=my.n}
+  G.diff=DDIF[divOf(fx.opp)];G.hu=G.P[st?k:0];G.car={cid,trust:Math.round(chem()),rel:Object.fromEntries(L.filter(i=>i!==cid&&i>=0).map(i=>[i,relOf(i)])),ask:0,got:0,ign:0,lk:0,lk2:0,auto:0};G.myP=()=>G.P.find(q=>q.t===0&&q.id===cid)||null;hudPortrait($('#hpL'),G.hu.id,G.mc);$('#nL').textContent=my.n}
  catch(e){if(pushed)TEAMS.pop();pushed=false;abortMatch(e);return}
  TEAMS.pop()}
 setInterval(()=>{if(!LIVE)return;if(!G){if(!CRE){cleanTemp();LIVE=null;hideHud();show('#career');draw()}return}
@@ -221,11 +223,11 @@ function cleanTemp(){const L=LIVE;if(!L)return;restoreMe();if(L.jc&&CH[L.jc.id])
 window.careerQuit=()=>{if(!LIVE)return false;cleanTemp();LIVE=null;CRE=0;res.classList.add('hidden');hideHud();try{musicPlay('menu')}catch(e){}show('#career');draw();toastC('Partido abandonado: no cuenta para tu carrera');return true};
 const _end=endMatch;endMatch=function(){if(!LIVE)return _end();const g=G,L=LIVE;_end();setTimeout(()=>{if(!LIVE||LIVE!==L)return;const mid=L.k==='street'?L.id:L.cid,me=g.P.concat(Object.values(g.bn||{}).filter(q=>q.pl)).filter(q=>q.t===0&&q.id===mid)[0],w=g.s[0]>g.s[1];
  cleanTemp();LIVE=null;$('#end').classList.add('hidden');hideHud();if(L.k==='street')return streetDone(w);
- const s=me?me.gs:null;try{done({opp:L.fx.opp,me:s&&{...s,sec:L.start?150:L.co.at},played:true,mine:g.s[0],theirs:g.s[1]})}catch(e){console.error(e);show('#career');draw()}},1050)};
+ const s=me?me.gs:null;try{done({opp:L.fx.opp,me:s&&{...s,sec:L.start?150:L.co.at},played:true,mine:g.s[0],theirs:g.s[1],car:g.car?{ask:g.car.ask,got:g.car.got,ign:g.car.ign}:null})}catch(e){console.error(e);show('#career');draw()}},1050)};
 ACT.street=()=>{if(C.tp<=0||C.en<15||C.inj>0)return;const id=C.p.cid,prev={};prev[id]=save.owned[id]?{...save.owned[id]}:null;LIVE={k:'street',id,sel:save.sel,lineup:save.lineup,prev};try{localStorage.setItem(TMPK,JSON.stringify({added:prev[id]?[]:[id],sel:save.sel,lineup:save.lineup}))}catch(e){}
- try{applyMe(C.t[C.myT].col);save.owned[id]={lvl:1,st:0};save.sel=id;window.STAD_PICK=2;const rv=pickRival(1);rv.col=rivalColor(CH[id].jc,CH[rv.id].jc);sec.classList.add('hidden');show(null);window.NOPICK=1;try{startMatch(1,rv)}finally{window.NOPICK=0}if(!G)throw new Error('startMatch no creó el partido')}catch(e){abortMatch(e)}};
-function streetDone(w){C.tp--;C.en=Math.max(0,C.en-15);C.fame+=w?3:1;C.mor=cl(C.mor+(w?4:-2),0,100);C.tot.street++;if(w)C.tot.streetW++;const ks=[];for(let i=0;i<(w?2:1);i++){const k=pick(SKS);if(Math.random()<.75&&grow(k))ks.push(STN[k])}log(w?'Ganas un 1v1 en la calle y subes tu fama 🔥':'Pierdes en la calle, pero aprendes.');checkAch();persist();
- res.innerHTML=`<h2>${w?'🏆 ¡GANAS EN LA CALLE!':'DERROTA CALLEJERA'}</h2><p>${ks.length?'Mejoras: '+ks.map(x=>'+1 '+x).join(', '):'Sin mejoras esta vez'}</p><button class="cb go" data-a="back">VOLVER</button>`;res.classList.remove('hidden');CRE=1}
+ try{applyMe(C.t[C.myT].col);save.owned[id]={lvl:1,st:0};save.sel=id;window.STAD_PICK=2;const rv=(C.chal&&C.chal.rv)||pickRival(1);rv.col=rivalColor(CH[id].jc,CH[rv.id].jc);sec.classList.add('hidden');show(null);window.NOPICK=1;try{startMatch(1,rv)}finally{window.NOPICK=0}if(!G)throw new Error('startMatch no creó el partido')}catch(e){abortMatch(e)}};
+function streetDone(w){const ch=C.chal;C.chal=null;C.tp--;if(ch){pay(w?ch.bet:-Math.min(C.money,ch.bet));if(w){C.fame+=5;snBump(.03)}log(`⚔ Reto de ${ch.name}: ${w?'ganas':'pierdes'} 💰${ch.bet}`)}C.en=Math.max(0,C.en-15);C.fame+=w?3:1;C.mor=cl(C.mor+(w?4:-2),0,100);C.tot.street++;if(w)C.tot.streetW++;const ks=[];for(let i=0;i<(w?2:1);i++){const k=pick(SKS);if(Math.random()<.75&&grow(k))ks.push(STN[k])}log(w?'Ganas un 1v1 en la calle y subes tu fama 🔥':'Pierdes en la calle, pero aprendes.');checkAch();persist();
+ res.innerHTML=`<h2>${w?'🏆 ¡GANAS EN LA CALLE!':'DERROTA CALLEJERA'}</h2>${ch?`<p>${w?'+':'-'}💰${ch.bet} · reto de ${esc(ch.name)}</p>`:''}<p>${ks.length?'Mejoras: '+ks.map(x=>'+1 '+x).join(', '):'Sin mejoras esta vez'}</p><button class="cb go" data-a="back">VOLVER</button>`;res.classList.remove('hidden');CRE=1}
 ACT.back=()=>{res.classList.add('hidden');CRE=0;hideHud();show('#career');draw()};
 /* ---- resultado, prensa posterior y eventos ---- */
 function done(o){const fx=nextFx(),myHome=fx.home,sa=o.mine,sb=o.theirs,mw=sa>sb,a=myHome?C.myT:fx.opp,b=myHome?fx.opp:C.myT,po=!!fx.po,dby=fx.opp===C.rival;
@@ -238,13 +240,13 @@ function done(o){const fx=nextFx(),myHome=fx.home,sa=o.mine,sb=o.theirs,mw=sa>sb
  T.g++;if(mw){T.w++;C.streak++;C.bst=Math.max(C.bst,C.streak);if(dby){T.derby++;C.fame+=6;C.mor=cl(C.mor+3,0,100);log('🔥 ¡Ganas el derbi contra '+C.t[fx.opp].n+'!')}}else{T.l++;C.streak=0}
  if(C.pk=='con'&&!mw&&o.played)C.fame=Math.max(0,C.fame-5);if(C.pk=='pro'&&!mw&&o.played){C.fame=Math.max(0,C.fame-8);C.trust=cl(C.trust-4,0,100);log('Tu provocación te sale cara: te critican en la prensa.')}if(C.pk=='pro'&&mw&&o.played){C.fame+=10;log('¡Cumples tu palabra y la afición te adora!')}C.pk=null;
  C.en=Math.max(0,C.en-(m&&o.played?28:6));if(o.played&&C.en<20&&Math.random()<.2){C.inj=r(1,2)-(C.own[6]?1:0);if(C.inj>0)log('🩹 Te lesionas por el cansancio acumulado.');else C.inj=0}
- const pr=Math.round(DSAL[divOf(C.myT)]*(.6+ovrP()/100)*(mw?1.4:1)*(C.own[5]?1.2:1)*(po?1.5:1));pay(pr);C.lastR={mw,nota,sa,sb,m,pr,opp:fx.opp,played:o.played,po,dby};
+ const pr=Math.round(DSAL[divOf(C.myT)]*(.6+ovrP()/100)*(mw?1.4:1)*(C.own[5]?1.2:1)*(po?1.5:1));pay(pr);C.lastR={car:o.car,mw,nota,sa,sb,m,pr,opp:fx.opp,played:o.played,po,dby};
  C.res.push({opp:fx.opp,sa,sb,w:mw,nota,po,home:myHome});if(C.res.length>40)C.res.shift();
  log(`${po?'🏆 '+poName(fx.stage)+': ':''}${mw?'Victoria':'Derrota'} ${sa}-${sb} ${myHome?'vs':'en'} ${C.t[fx.opp].n}${nota?' · nota '+nota:''}`);if(mw&&sa-sb>=15)log(`${C.t[C.myT].n} aplasta a ${C.t[fx.opp].n}: «Exhibición total»`);
  if(po&&C.pl.stage===2&&C.pl.champ===C.myT)log('🏆 ¡'+C.t[C.myT].n+' gana los playoffs!');
- checkAch();persist();showRes()}
+ p2done(o,mw,nota);checkAch();persist();showRes()}
 function showRes(){const R=C.lastR,m=R.m,n=R.nota;res.innerHTML=`<div class="pxt" style="font-size:12px">${R.po?'🏆 PLAYOFFS · ':''}${R.mw?'🏆 VICTORIA':'DERROTA'}${R.dby&&R.mw?' · 🔥 DERBI':''}</div><div class="rw" style="gap:14px">${logo(C.myT,56)}<span class="big">${R.sa} - ${R.sb}</span>${logo(R.opp,56)}</div>
- ${m?`<div class="cd" style="min-width:270px"><div class="pxt sm">TU ACTUACIÓN</div><div class="big" style="color:${n>=7?'#4ade80':n>=5.5?'#ffd23d':'#ff6a6a'}">${n.toFixed(1)}</div><div style="font-size:12px">PTS ${m.pts} · REB ${m.reb} · AST ${m.ast} · ROB ${m.stl} · TAP ${m.blk}</div></div>`:`<div class="cd">${C.inj>0?'Lesionado: no juegas':'No has jugado minutos hoy.'}</div>`}
+ ${m?`<div class="cd" style="min-width:270px"><div class="pxt sm">TU ACTUACIÓN</div><div class="big" style="color:${n>=7?'#4ade80':n>=5.5?'#ffd23d':'#ff6a6a'}">${n.toFixed(1)}</div><div style="font-size:12px">PTS ${m.pts} · REB ${m.reb} · AST ${m.ast} · ROB ${m.stl} · TAP ${m.blk}</div>${R.car&&R.car.ask?`<div style="font-size:12px;margin-top:5px;color:#9fb0e0">🙋 Pases pedidos ${R.car.ask} · recibidos <b style="color:#4ade80">${R.car.got}</b> · ignorado ${R.car.ign}</div>`:''}</div>`:`<div class="cd">${C.inj>0?'Lesionado: no juegas':'No has jugado minutos hoy.'}</div>`}
  <div class="cd" style="max-width:440px;font-size:12px">🗣 Míster ${C.co.n}: «${coachMsg(n)}»<br><small style="color:#9fb0e0">+💰${R.pr}</small></div><button class="cb go" data-a="press">${m?'🎤 RUEDA DE PRENSA':'CONTINUAR ▶'}</button>`;res.classList.remove('hidden');CRE=1;paint(res)}
 ACT.press=()=>{const R=C.lastR;if(!R.m)return maybeEvent();const n=R.nota,mw=R.mw;let q,o;
  if(R.dby&&mw){q='«¡Has ganado el derbi! ¿Un mensaje para la afición rival?»';o=[['🙏 «Respeto, son un gran equipo»',{trust:3,mor:2},'Elegancia tras el derbi.'],['😏 «La ciudad es nuestra»',{fame:7,trust:-1},'Los hinchas lo corean toda la noche.'],['🤐 «Hablamos en el campo»',{fame:2},'Misterio y poca palabra.']]}
@@ -271,8 +273,8 @@ const EVT=[
 {t:'🤕 BAJA EN EL EQUIPO',x:'Un compañero se lesiona y el míster cuenta contigo.',o:[['Estoy listo',()=>{C.prom=Math.max(C.prom,5);C.trust=cl(C.trust+3,0,100);return'Más oportunidades: el míster confía en ti.'}],['Que juegue otro',()=>{C.mor=cl(C.mor-2,0,100);return'Pierdes una oportunidad.'}]]},
 {t:'💼 LLAMA TU AGENTE',x:'Tu agente dice que hay una marca de bebidas interesada en ti.',o:[['Negociar fuerte',()=>{if(Math.random()<.5){pay(2200);C.fame+=3;return'¡Gran acuerdo! +2200 💰.'}return'La marca se echa atrás.'}],['Aceptar lo que ofrecen',()=>{pay(900);return'Firmas un contrato pequeño: +900 💰.'}]]}];
 ACT.evt=()=>maybeEvent();
-function maybeEvent(){if(C.evDone===C.rd+':'+C.season+':'+(C.lastR&&C.lastR.po?1:0)||Math.random()>.55){return finish()}C.evDone=C.rd+':'+C.season+':'+(C.lastR&&C.lastR.po?1:0);const e=pick(EVT);C.ev=e;
- res.innerHTML=`<div class="pxt">${e.t}</div><p style="max-width:440px;font-size:15px">${e.x}</p><div class="opts">${e.o.map((x,i)=>`<button class="cb" data-a="evo" data-v="${i}">${x[0]}</button>`).join('')}</div>`;res.classList.remove('hidden');CRE=1}
+function maybeEvent(){if(C.evDone===C.rd+':'+C.season+':'+(C.lastR&&C.lastR.po?1:0)||Math.random()>.55){return finish()}C.evDone=C.rd+':'+C.season+':'+(C.lastR&&C.lastR.po?1:0);C.evm=mateId();const e=pick(EVT.filter(e=>!e.c||e.c()));C.ev=e;
+ res.innerHTML=`<div class="pxt">${e.t}</div><p style="max-width:440px;font-size:15px">${typeof e.x==='function'?e.x():e.x}</p><div class="opts">${e.o.map((x,i)=>`<button class="cb" data-a="evo" data-v="${i}">${x[0]}</button>`).join('')}</div>`;res.classList.remove('hidden');CRE=1}
 ACT.evo=v=>{const t=C.ev.o[+v][1]();log(t);checkAch();persist();res.innerHTML=`<p style="max-width:440px;font-size:15px">${t}</p><button class="cb go" data-a="fin">CONTINUAR ▶</button>`};
 ACT.fin=()=>finish();
 function finish(){res.classList.add('hidden');CRE=0;nextRound(!(C.lastR&&C.lastR.po));hideHud();show('#career');draw()}
@@ -283,10 +285,10 @@ const objOk=()=>{const o=C.obj,S=C.ss,R=C.rec[C.myT];return o.k=='nota'?S.g>=3&&
 function newObj(){const k=pick(['nota','games','win']);C.obj=k=='nota'?{k,v:6.5,t:'Nota media de 6.5 o más.',pr:1200}:k=='games'?{k,v:6,t:'Juega al menos 6 partidos.',pr:900}:{k,v:6,t:'Que tu equipo gane 6 partidos.',pr:1000}}
 ACT.endseason=()=>{const my=C.myT,d=divOf(my);if(!C.pl)initPlayoffs();while(C.pl.stage<2)plStep(null);
  const tb=C.dv.map((_,i)=>table(i)),pos=tb[d].indexOf(my)+1,champ=C.pl.champ===my,ch=champ&&d==0,S=C.ss,nota=S.g?(S.n/S.g).toFixed(1):'-',R=C.rec[my],up=d>0&&pos==1,dn=d<2&&pos==tb[d].length,ok=C.obj&&objOk(),aw=[];
- if(champ){C.tot.titles++;C.fame+=ch?40:15;pay(ch?5000:2000+(2-d)*600);log(`🏆 ¡${C.t[my].n} campeón de ${DN[d]}!`)}
+ if(champ){C.tot.titles++;C.fame+=ch?40:15;pay(ch?5000:2000+(2-d)*600);log(`🏆 ¡${C.t[my].n} campeón de ${DN[d]}!`);gem(ch?25:8,'por el título')}
  if(S.g>=4&&S.n/S.g>=7.5)aw.push(`Mejor quinteto ${DN[d]} (Temp. ${C.season})`);if(C.p.age<=21&&S.g>=4&&S.n/S.g>=7)aw.push(`Jugador revelación (Temp. ${C.season})`);if(S.g>=4&&S.pts/S.g>=14)aw.push(`Máximo anotador del equipo (Temp. ${C.season})`);
  aw.forEach(a=>{C.aw.push(a);C.fame+=6;log('🏅 Premio: '+a)});
- C.hist.push({s:C.season,tn:C.t[my].n,d,pos,nota,c:ch,t:champ,up});if(ok){pay(C.obj.pr);C.trust=cl(C.trust+5,0,100)}
+ C.hist.push({s:C.season,tn:C.t[my].n,d,pos,nota,c:ch,t:champ,up});if(up)gem(5,'por el ascenso');if(ok){pay(C.obj.pr);C.trust=cl(C.trust+5,0,100)}
  C.dv=[tb[0].slice(0,-1).concat(tb[1][0]),[tb[0][tb[0].length-1]].concat(tb[1].slice(1,-1),tb[2][0]),tb[2].slice(1).concat(tb[1][tb[1].length-1])];
  C.sum={pos,d,ch,champ,nota,w:R.w,l:R.l,up,dn,ok,pr:C.obj&&C.obj.pr,aw};C.phase='offers';checkAch();persist();offers()};
 function offers(){const d=divOf(C.myT),av=C.ss.g?C.ss.n/C.ss.g:5,me=ovrP(),sm=C.sum;let list=[];
@@ -294,8 +296,9 @@ function offers(){const d=divOf(C.myT),av=C.ss.g?C.ss.n/C.ss.g:5,me=ovrP(),sm=C.
  C.off=list.slice(0,3);persist();hideHud();show('#career');const k=slotOf(C.p.pos);
  sec.innerHTML=`<div class="chd"><div><b style="font-size:15px">${sm?'📋 FIN DE TEMPORADA '+C.season:'📨 TUS OFERTAS'}</b><small>${sm?'':'Empiezas desde abajo: ¡sube división a división!'}</small></div></div>${sm?`<div class="cd gold">${sm.ch?'🏆 ¡CAMPEÓN DE LA ÉLITE! ':sm.champ?'🏆 ¡CAMPEÓN DE PLAYOFFS! ':''}Terminas <b>${sm.pos}º</b> en ${DN[sm.d]} (${sm.w}-${sm.l}) · nota media <b>${sm.nota}</b>${sm.up?'<br>⬆ ¡Ascenso de división!':''}${sm.dn?'<br>⬇ Descenso de división…':''}${sm.ok?`<br>🎯 Objetivo cumplido: +💰${sm.pr}`:''}${(sm.aw||[]).map(a=>'<br>🏅 '+a).join('')}</div>`:''}
  <div id="cbody">${C.off.map(t=>{const di=divOf(t),ids=C.t[t].ids,sd=ov(ids[k]),role=me>=sd-1?'TITULAR garantizado':me>=sd-9?'Rotación: pelearás por minutos':'Proyecto: empiezas en el banquillo';return`<div class="cd"><div class="rw">${logo(t,50)}<div class="sp"><b>${C.t[t].n}</b><small style="color:${DC[di]};display:block">DIVISIÓN ${DN[di]}</small></div></div><div class="rw" style="margin:8px 0">${ids.map(i=>fig(i,C.t[t].col,38)).join('')}</div><p style="font-size:12px;line-height:1.6">⭐ Nivel del equipo ${str(t)}<br>🎽 ${role}<br>💰 ${Math.round(DSAL[di]*(.6+me/100))} por partido</p><button class="cb go" style="width:100%" data-a="sign" data-v="${t}">${t===C.myT&&sm?'RENOVAR':'FICHAR'}</button></div>`}).join('')}</div>`;paint(sec)}
-ACT.sign=v=>{const t=+v,k=slotOf(C.p.pos),sd=ov(C.t[t].ids[k]),me=ovrP(),first=!C.sum;if(!first)startSeason(t);C.myT=t;C.prom=me>=sd-1?8:me>=sd-9?3:0;if(first)C.trust=50;C.phase='hub';setRival();C.vd=null;checkAch();persist();TAB='home';show('#career');draw()};
-function startSeason(t){const same=t===C.myT;C.season++;const p=C.p;p.age++;const y=p.age<24?2:p.age<29?1:0;for(let i=0;i<y+r(0,1);i++)grow(pick(SKS));if(p.age>31)p.st.vel=Math.max(30,p.st.vel-1);
+ACT.sign=v=>{if(C.sum&&C.p.age>=40)return ACT.retire();const t=+v,k=slotOf(C.p.pos),sd=ov(C.t[t].ids[k]),me=ovrP(),first=!C.sum;if(!first)startSeason(t);C.myT=t;C.prom=me>=sd-1?8:me>=sd-9?3:0;if(first)C.trust=50;C.phase='hub';setRival();C.vd=null;checkAch();persist();TAB='home';show('#career');draw()};
+function startSeason(t){const same=t===C.myT;C.season++;const p=C.p;p.age++;const y=p.age<24?2:p.age<29?1:0;for(let i=0;i<y+r(0,1);i++)grow(pick(SKS));if(p.age>31)p.st.vel=Math.max(30,p.st.vel-1);if(p.age>=32){const n=1+(p.age>=35?1:0)+(p.age>=38?1:0);for(let i=0;i<n;i++){const k=pick(SKS);p.st[k]=Math.max(30,p.st[k]-r(1,2))}}
+ if(!same){C.rel={};C.chat=[];C.cap=0}
  tables();C.ss={g:0,n:0,pts:0,reb:0,ast:0,stl:0,blk:0};C.sum=null;C.en=100;C.tp=3+(C.own[8]?1:0);C.asked=0;C.inj=0;C.streak=0;C.mor=cl(C.mor+10,0,100);if(!same)C.trust=50;C.co={n:pick(['Ortega','Vela','Salas','Ferrer','Mora','Duarte']),s:pick(['Exigente','Paciente','Táctico'])};newObj()}
 /* ---- crear jugador: cara/personaje de un ÉPICO ---- */
 const epics=()=>CH.filter(c=>c.rar==2&&!c.hide).map(c=>c.id);
@@ -315,10 +318,128 @@ ACT.cpos=v=>{window._cd.pos=v;refreshCreate()};ACT.csty=v=>{window._cd.sty=v;ref
 ACT.cdice=()=>{const n=pick(NOMBRES);window._cd.name=n;$('#cname').value=n};
 ACT.cdone=()=>{const D=window._cd,n=($('#cname').value||D.name||'').trim();D.name=n;if(n.length<2){toastC('Pon un nombre (mín. 2 letras)');return}
  C={v:3,p:{name:n,pos:D.pos,cm:D.cm,cid:D.cid,age:18,st:draftStats(D),pot:r(84,95),num:D.num,sty:D.sty},season:1,phase:'offers',en:100,mor:70,tp:3,trust:50,prom:0,money:500,fame:0,own:{},int:1,inj:0,buff:0,log:['Empieza tu carrera profesional 🏀'],hist:[],ss:{g:0,n:0,pts:0,reb:0,ast:0,stl:0,blk:0},asked:0,co:{n:pick(['Ortega','Vela','Salas','Ferrer']),s:pick(['Exigente','Paciente','Táctico'])},sum:null,myT:0};createLeague();newObj();migrate();C.bd=2;window._cd=null;persist();offers()};
-ACT.reset=()=>{if(!confirm('¿Borrar esta carrera y empezar otra?'))return;C=null;try{localStorage.removeItem(KEY)}catch(e){}window._cd=null;TAB='home';create()};
+ACT.reset=()=>{if(!confirm('¿Borrar esta carrera y empezar otra?'))return;C=null;save.cr=null;try{localStorage.removeItem(KEY);store()}catch(e){}window._cd=null;TAB='home';create()};
+/* ================= FASE 2: vestuario, redes, retos, valor, edad y retiro ================= */
+const gem=(n,w)=>{try{if(window.addGems)window.addGems(n,w)}catch(e){}};
+const fmt=n=>n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e4?Math.round(n/1e3)+'K':n>=1e3?(n/1e3).toFixed(1)+'K':''+Math.round(n);
+const relOf=id=>C.rel&&C.rel[id]!=null?C.rel[id]:40;
+const relSet=(id,d)=>{if(id==null)return;C.rel[id]=cl(relOf(id)+d,0,100)};
+const mateIds=()=>C.t[C.myT].ids.filter(i=>i!==C.p.cid);
+const mateId=()=>pick(mateIds());
+const mname=id=>CH[id]?CH[id].name:'tu compañero';
+function chem(c=C){const t=c.t[c.myT].ids.filter(i=>i!==c.p.cid).slice(0,3);return avg(t.map(i=>c.rel&&c.rel[i]!=null?c.rel[i]:40))}
+function chemB(){try{return C&&C.rel?(chem()-50)/900:0}catch(e){return 0}}
+const relTxt=v=>v<25?['Desconfianza','#ff6a6a']:v<45?['Frío','#ffb23d']:v<65?['Neutral','#9fb0e0']:v<85?['Colega','#4ade80']:['Hermano','#ffd23d'];
+const SN={ig:{n:'Instagram',e:'📸',c:'#ff4fd8',m:.012},yt:{n:'YouTube',e:'▶️',c:'#ff4343',m:.03},tt:{n:'TikTok',e:'🎵',c:'#4fe0ff',m:.007},x:{n:'X',e:'🐦',c:'#9fb0e0',m:.002}};
+const sfOf=c=>Object.values(c.sn||{}).reduce((a,x)=>a+x.f,0),sf=()=>sfOf(C);
+function mvOf(c){const o=ovrSt(c.p.st,c.p.pos),a=c.p.age,af=a<=19?1.35:a<=22?1.2:a<=27?1:a<=30?.85:a<=33?.6:a<=36?.35:.15;
+ return Math.round(Math.pow(Math.max(5,o-30),2.3)*14*af*(1+c.fame/250+sfOf(c)/150000)*(1+(c.tot.titles||0)*.05)/100)*100}
+const mv=()=>mvOf(C);
+const phase=a=>a<=20?'🌱 Promesa':a<=27?'🔥 En su mejor momento':a<=32?'💪 Veterano':a<=36?'🧓 Final de carrera':'👴 Leyenda';
+function snBump(p){Object.values(C.sn).forEach(x=>{x.f=Math.max(0,Math.round(x.f*(1+p)))});snCheck()}
+const SM=[[1000,0,'📈 ¡1K seguidores! Ya eres alguien en redes.'],[10000,5,'🔥 ¡10K seguidores! Cuenta verificada.'],[50000,10,'🌟 ¡50K seguidores!'],[100000,20,'💯 ¡100K seguidores! Eres una estrella.'],[500000,50,'👑 ¡500K seguidores! Fenómeno mundial.']];
+function snCheck(){const t=sf();SM.forEach(([n,g,m])=>{if(t>=n&&!C.sm.includes(n)){C.sm.push(n);C.fame+=6;log(m);if(g)gem(g,'por tus seguidores');toastC(m)}})}
+function snGain(k,g){C.sn[k].f+=Math.max(1,Math.round(g))}
+const snInc=()=>{let m=0;for(const k in C.sn){const f=C.sn[k].f;if(f>=1000)m+=f*SN[k].m}m+=sf()*.004*C.mer;return Math.round(m)};
+/* ---- chat y conversaciones con el equipo ---- */
+const CHL={hi:['Cuando quieras te la doy, ¡pídemela!','Con vosotros me siento como en casa.','Hoy salimos a comernos la pista, ¿eh?','Eres de los míos, lo sabes.'],mid:['¿Vemos vídeo del rival luego?','Buen entreno hoy.','¿Quién paga el café?','¿Habéis visto el calendario? Se viene duro.'],lo:['Últimamente no me pasas ni el saludo…','Hay gente que solo juega para sí misma.','Ya veremos si te doy el balón…','Esto no es un equipo, es una academia de solistas.']};
+function chatLine(){const id=mateId(),v=relOf(id),k=v>=65?'hi':v>=35?'mid':'lo';C.chat.push({id,t:pick(CHL[k])});if(C.chat.length>8)C.chat.shift()}
+const DLG=[
+ {q:n=>`${n}: «¿Quedamos a tirar un rato después del entreno?»`,o:[['Claro, vamos',6,'Tiráis juntos y os entendéis mejor.',{en:-5,sk:'tir'}],['Hoy no puedo',-2,'Se queda un poco chafado.']]},
+ {q:n=>`${n} está serio: «Siento que no me pasas el balón.»`,o:[['Te prometo buscarte más',5,'Se anima: «Eso quería oír».',{mor:2}],['Muévete mejor sin balón',-5,'Se lo toma mal, pero lo piensa.',{}],['Hablemos con el míster',3,'Apreciáis la idea de arreglarlo en equipo.',{trust:2}]]},
+ {q:n=>`${n}: «Oye, ¿qué haces para llegar tan fresco al último cuarto?»`,o:[['Te enseño mi rutina',6,'Te lo agradece muchísimo.',{en:-4,sk:'agu'}],['Es un secreto',-1,'Se ríe, pero queda frío.']]},
+ {q:n=>`${n} te cuenta que está agobiado por un problema familiar.`,o:[['Escucharle de verdad',8,'Se abre contigo. Fuerte vínculo.',{en:-5,mor:2}],['«Ya se arreglará»',-4,'Siente que no te importa.']]},
+ {q:n=>`${n} te reta: «A que no me ganas en un concurso de triples».`,o:[['¡Acepto!',5,'Pique sano, risas y mucho tiro.',{sk:'tir',en:-6}],['Paso, no me va',-1,'«Aburrido», bromea.']]},
+ {q:n=>`${n}: «Mañana hay cena en casa de mi abuela, ¿te apuntas?»`,o:[['¡Voy encantado!',9,'Os hacéis casi hermanos.',{mor:4}],['Tengo cosas que hacer',-3,'Se le nota la decepción.']]},
+ {q:n=>`${n}: «Dicen que quieres ser la estrella del equipo…»`,o:[['Somos un equipo, siempre',6,'Le tranquiliza oírlo.',{trust:1}],['Si juego mejor, me toca brillar',-5,'Se tensa el ambiente.',{fame:2}],['Brillemos juntos',7,'Chocáis la mano. ¡Hermanos!',{mor:2}]]},
+ {q:n=>`${n} te pide que le ayudes con su defensa.`,o:[['Vamos a la pista ahora',6,'Entrenáis un rato y mejora.',{en:-6,sk:'def'}],['Mejor otro día',-2,'Asiente sin decir nada.']]}];
+ACT.talk=v=>{const id=+v;if(C.sa<1)return toastC('Hoy no te quedan acciones sociales');C.sa--;const d=DLG[r(0,DLG.length-1)];C.dl={id,d};const n=mname(id);
+ res.innerHTML=`<div class="rw center">${fig(id,C.t[C.myT].col,64)}</div><div class="pxt">💬 CONVERSACIÓN</div><p style="max-width:460px;font-size:15px">${d.q(esc(n))}</p><div class="opts">${d.o.map((x,i)=>`<button class="cb" data-a="dlg" data-v="${i}">${x[0]}</button>`).join('')}</div>`;res.classList.remove('hidden');CRE=1;paint(res)};
+ACT.dlg=v=>{if(!C.dl)return;const{id,d}=C.dl,o=d.o[+v],e=o[3]||{};C.dl=null;relSet(id,o[1]);let x='';if(e.en)C.en=cl(C.en+e.en,0,100);if(e.mor)C.mor=cl(C.mor+e.mor,0,100);if(e.trust)C.trust=cl(C.trust+e.trust,0,100);if(e.fame)C.fame+=e.fame;if(e.sk&&Math.random()<.4&&grow(e.sk))x=` · +1 ${STN[e.sk]}`;
+ log(`🗣 ${mname(id)}: ${o[2]}`);persist();res.innerHTML=`<div class="rw center">${fig(id,C.t[C.myT].col,56)}</div><p style="max-width:440px;font-size:15px">${o[2]}</p><div style="font-size:13px;color:${o[1]>=0?'#4ade80':'#ff6a6a'}">🤝 Confianza con ${esc(mname(id))}: ${o[1]>0?'+':''}${o[1]}${x}</div><button class="cb go" data-a="dlgx">CONTINUAR ▶</button>`;paint(res)};
+ACT.dlgx=()=>{res.classList.add('hidden');CRE=0;draw()};
+ACT.gift=v=>{const id=+v;if(C.sa<1||C.money<500)return toastC(C.sa<1?'Sin acciones sociales hoy':'Necesitas 💰500');C.sa--;pay(-500);relSet(id,12);log(`🎁 Regalas algo a ${mname(id)}.`);persist();draw();toastC('🎁 ¡Le ha encantado! +12 confianza')};
+ACT.joint=v=>{const id=+v;if(C.sa<1||C.en<12)return toastC(C.sa<1?'Sin acciones sociales hoy':'Estás muy cansado');C.sa--;C.en-=10;relSet(id,5);let t='Entrenáis juntos: +5 confianza';if(Math.random()<.4){const k=pick(SKS);if(grow(k))t+=` · +1 ${STN[k]}`}persist();draw();toastC('🏋 '+t)};
+ACT.din=()=>{if(C.sa<1||C.money<300)return toastC(C.sa<1?'Sin acciones sociales hoy':'Necesitas 💰300');C.sa--;pay(-300);mateIds().forEach(i=>relSet(i,6));C.mor=cl(C.mor+3,0,100);log('🍕 Cena con todo el equipo: ambientazo.');persist();draw();toastC('🍕 ¡Cena de equipo! +6 confianza con todos')};
+ACT.spch=()=>{if(C.sa<2)return toastC('Necesitas 2 acciones sociales');C.sa-=2;const good=C.trust>=40&&chem()>=40||Math.random()<.3;if(good){mateIds().forEach(i=>relSet(i,5));C.mor=cl(C.mor+5,0,100);C.trust=cl(C.trust+2,0,100);log('🎙 Tu charla de equipo enciende el vestuario.');toastC('🎙 ¡Gran charla! +5 confianza con todos')}else{mateIds().forEach(i=>relSet(i,-3));C.trust=cl(C.trust-2,0,100);log('🎙 Tu charla de equipo no convence a nadie.');toastC('🎙 Nadie te hace caso… -3 confianza')}persist();draw()};
+function vVest(b){const ids=mateIds(),ch=Math.round(chem());
+ b.innerHTML=`<div class="cd wide"><div class="pxt sm">🗣 VESTUARIO · QUÍMICA ${ch}%</div><small style="display:block;color:#9fb0e0;margin:4px 0">Acciones sociales hoy: <b style="color:#ffd23d">${C.sa}</b>${C.cap?' · 🎖 Capitán (+1)':''}. Más confianza = más rendimiento y tus compañeros te dan el balón cuando lo pides. Cuidado: el míster sigue siendo ${C.trust}% 🤝.</small>
+ <div class="rw" style="margin-top:6px"><button class="cb ${C.sa<2?'no':''}" data-a="spch">🎙 CHARLA DE EQUIPO<small>2 acc.</small></button><button class="cb ${C.sa<1||C.money<300?'no':''}" data-a="din">🍕 CENA DE EQUIPO<small>💰300 · 1 acc.</small></button></div></div>
+ ${ids.map(id=>{const v=relOf(id),[tx,co]=relTxt(v);return`<div class="cd"><div class="rw">${fig(id,C.t[C.myT].col,48)}<div class="sp"><b>${CH[id].name}</b><small style="display:block;color:#9fb0e0">${CH[id].pos} · Nivel ${ov(id)}</small><div class="stb"><i><u style="width:${v}%;background:${co}"></u></i><span style="width:auto;color:${co}">${tx} ${v}</span></div></div></div>
+ <div class="rw" style="margin-top:6px"><button class="cb sp ${C.sa<1?'no':''}" data-a="talk" data-v="${id}" style="font-size:8px">💬 HABLAR</button><button class="cb sp ${C.sa<1||C.en<12?'no':''}" data-a="joint" data-v="${id}" style="font-size:8px">🏋 ENTRENAR</button><button class="cb sp ${C.sa<1||C.money<500?'no':''}" data-a="gift" data-v="${id}" style="font-size:8px">🎁 💰500</button></div></div>`}).join('')}
+ <div class="cd wide"><div class="pxt sm">💬 CHAT DEL EQUIPO</div>${C.chat.slice().reverse().map(m=>`<div class="rw" style="padding:4px 0;border-bottom:1px dashed #1d2560">${fig(m.id,C.t[C.myT].col,30)}<div class="sp"><b style="font-size:11px">${esc(mname(m.id))}</b><div style="font-size:12px">${m.t}</div></div></div>`).join('')||'<small style="color:#9fb0e0">El grupo está en silencio.</small>'}</div>`}
+/* ---- redes sociales ---- */
+const POSTS=[
+ {k:'foto',e:'📷',n:'Foto de entreno',d:'Seguro · Instagram',f:()=>{const g=(25+C.sn.ig.f*.03)*(1+C.fame/150)*(.6+Math.random()*.8);snGain('ig',g);return`Tu foto gusta: +${fmt(g)} en Instagram.`}},
+ {k:'vlog',e:'🎬',n:'Vlog en YouTube',d:'⚡-8 · más seguidores',f:()=>{if(C.en<8)return'Estás agotado para grabar.';C.en-=8;const g=(15+C.sn.yt.f*.05)*(1+C.fame/120)*(.6+Math.random()*.9);snGain('yt',g);return`El vlog funciona: +${fmt(g)} suscriptores.`}},
+ {k:'reto',e:'🎵',n:'Reto viral',d:'TikTok · 25% de viralizar',f:()=>{const v=Math.random()<.25,g=(20+C.sn.tt.f*.03)*(v?7:1)*(.6+Math.random()*.8);snGain('tt',g);if(v)C.fame+=5;return v?`¡VIRAL! +${fmt(g)} en TikTok y fama +5.`:`Pasa sin pena: +${fmt(g)} en TikTok.`}},
+ {k:'hilo',e:'🔥',n:'Opinión polémica',d:'X · riesgo alto, premio alto',f:()=>{if(Math.random()<.5){const g=(30+C.sn.x.f*.15)*(1+C.fame/100);snGain('x',g);C.fame+=5;return`La gente habla de ti: +${fmt(g)} en X y fama +5.`}snBump(-.03);C.trust=cl(C.trust-3,0,100);C.mor=cl(C.mor-3,0,100);return'Te ha salido el tiro por la culata: pierdes seguidores y el míster no está contento.'}},
+ {k:'hl',e:'🏀',n:'Resumen del partido',d:'Necesitas nota ≥ 7 en el último partido',f:()=>{if(!C.lastR||!C.lastR.nota||C.lastR.nota<7)return'No tienes material bueno, juega mejor primero.';const g=(40+sf()*.02)*(1+C.lastR.nota/10);['ig','yt','tt'].forEach(k=>snGain(k,g/3));return`Tus highlights vuelan: +${fmt(g)} seguidores entre todas las redes.`}},
+ {k:'sort',e:'🎁',n:'Sorteo de camisetas',d:'💰400 · +seguidores en todo',f:()=>{if(C.money<400)return'No tienes 💰400.';pay(-400);const t=Math.max(40,Math.round(sf()*.06));Object.keys(C.sn).forEach(k=>snGain(k,t/4));C.fame+=2;return`El sorteo arrasa: +${fmt(t)} seguidores.`}},
+ {k:'pat',e:'🤝',n:'Post patrocinado',d:'Necesita 2K seguidores · dinero',f:()=>{if(sf()<2000)return'Aún eres demasiado pequeño para marcas (2K).';const m=Math.round(sf()*.05);if(Math.random()<.12){snBump(-.02);return'Tus fans critican el anuncio: pierdes seguidores y no cobras.'}pay(m);return`La marca te paga 💰${m}.`}}];
+ACT.post=v=>{const p=POSTS.find(x=>x.k===v);if(!p||C.pa<1)return toastC('Hoy ya has publicado lo suficiente');const before=sf();const t=p.f();if(/^(Estás agotado|No tienes|Aún eres|No tienes material)/.test(t))return toastC(t);C.pa--;C.lastPost=t;log('📱 '+t);snCheck();persist();draw();toastC('📱 '+t)};
+const MER=[[2500,1000,'👕 Camiseta con tu nombre'],[8000,10000,'🧢 Colección de ropa'],[25000,50000,'🏷 Marca propia']];
+ACT.mer=()=>{const m=MER[C.mer];if(!m||C.money<m[0]||sf()<m[1])return toastC('Todavía no puedes');pay(-m[0]);C.mer++;C.fame+=4;log('🛍 Lanzas: '+m[2]);persist();draw();toastC('🛍 ¡Nuevo negocio!')};
+function vSoc(b){const t=sf(),inc=snInc(),m=MER[C.mer];
+ b.innerHTML=`<div class="cd wide gold"><div class="rw"><div class="sp"><div class="pxt sm">📱 TUS REDES · ${fmt(t)} seguidores</div><small style="color:#9fb0e0;display:block;margin-top:4px">💰 Ingresos por jornada: <b style="color:#ffd23d">+${inc}</b> · Publicaciones hoy: <b>${C.pa}</b>${t>=10000?' · ✅ Verificado':''}</small></div></div>
+ <div class="rw" style="margin-top:8px">${Object.keys(SN).map(k=>`<div class="cd" style="flex:1 1 40%;padding:8px;border-color:${SN[k].c}"><div style="font-size:20px">${SN[k].e}</div><b style="font-size:15px;color:${SN[k].c}">${fmt(C.sn[k].f)}</b><small style="display:block;color:#9fb0e0">${SN[k].n}${C.sn[k].f<1000?' · monetiza a 1K':''}</small></div>`).join('')}</div>${C.lastPost?`<p style="font-size:12px;margin-top:8px">📝 ${C.lastPost}</p>`:''}</div>
+ <div class="cd"><div class="pxt sm">✍ PUBLICAR</div>${POSTS.map(p=>`<div class="sh"><i>${p.e}</i><div class="sp"><b>${p.n}</b><small>${p.d}</small></div><button class="cb ${C.pa<1?'no':''}" data-a="post" data-v="${p.k}">PUBLICAR</button></div>`).join('')}</div>
+ <div class="cd"><div class="pxt sm">🛍 NEGOCIOS</div>${m?`<div class="sh"><i>🛍</i><div class="sp"><b>${m[2]}</b><small>Requiere ${fmt(m[1])} seguidores · ingresos fijos por jornada</small></div><button class="cb ${C.money<m[0]||t<m[1]?'no':''}" data-a="mer">💰${m[0]}</button></div>`:'<small style="color:#4ade80">✔ Imperio completo</small>'}<div class="pxt sm" style="margin-top:10px">🎖 HITOS (💎)</div>${SM.map(([n,g])=>`<div class="bdg ${C.sm.includes(n)?'':'off'}"><i>${C.sm.includes(n)?'✅':'🔒'}</i><div class="sp"><b>${fmt(n)} seguidores</b><small>${g?'+'+g+' 💎':'+fama'}</small></div></div>`).join('')}</div>`}
+/* ---- retos de otros jugadores ---- */
+function genChallenge(){const ts=C.t.map((_,i)=>i).filter(i=>i!==C.myT),t=pick(ts),cid=pick(C.t[t].ids),d=divOf(C.myT),bet=pick([[200,400],[400,800],[800,1500]][2-d>=0?2-d:0].concat([300]));
+ const L=[`«Dicen que eres bueno… demuéstralo en la calle.»`,`«Te reto a un 1v1, ¿o te da miedo?»`,`«Mi equipo dice que no me ganas. ¿Apuestas?»`];C.inbox.push({cid,tn:C.t[t].n,bet,msg:pick(L),exp:C.rd+3})}
+ACT.chacc=v=>{const ch=C.inbox[+v];if(!ch)return;if(C.en<15||C.inj>0)return toastC(C.inj>0?'Estás lesionado 🩹':'Estás muy cansado para un reto');if(C.money<ch.bet)return toastC('Necesitas 💰'+ch.bet+' para apostar');
+ C.inbox.splice(+v,1);C.chal={cid:ch.cid,bet:ch.bet,name:CH[ch.cid].name,rv:{id:ch.cid,lvl:r(3,8),st:r(0,3)}};const t=C.tp;C.tp++;ACT.street();if(!LIVE){C.tp=t;C.chal=null}};
+ACT.chno=v=>{const ch=C.inbox[+v];if(!ch)return;C.inbox.splice(+v,1);if(Math.random()<.4){snBump(-.01);log(`🐔 ${CH[ch.cid].name} te llama gallina en redes.`)}else log(`Rechazas el reto de ${CH[ch.cid].name}.`);persist();draw()};
+/* ---- edad, retiro y valor ---- */
+function retCard(){const a=C.p.age;if(a<34)return'';const f=a>=40;return`<div class="cd wide ${f?'':'gold'}" style="border-color:#ff9a3d"><div class="pxt sm">🪑 ${f?'ES HORA DE RETIRARSE':'¿PENSANDO EN LA RETIRADA?'}</div><p style="font-size:13px;margin:6px 0">${f?'Tu cuerpo dice basta. A los 40 ya no puedes seguir: toca colgar las botas con honor.':a>=37?`Con ${a} años tu valor se desploma y las lesiones acechan. Tu agente y el míster te aconsejan retirarte.`:`Tienes ${a} años. Tu agente: «Piensa en tu legado; cada temporada que pasa valdrás menos».`}</p><div class="rw"><button class="cb red" data-a="retire">🪑 RETIRARME</button>${f?'':'<small style="color:#9fb0e0">También puedes seguir jugando… por ahora.</small>'}</div></div>`}
+function p2home(b){let h='';if(C.inbox.length)h+=`<div class="cd wide gold"><div class="pxt sm">📨 RETOS (${C.inbox.length})</div>${C.inbox.map((x,i)=>`<div class="rw" style="padding:6px 0;border-bottom:1px dashed #1d2560">${fig(x.cid,C.t[C.myT].col,44)}<div class="sp"><b>${CH[x.cid].name}</b> <small style="color:#9fb0e0">(${x.tn})</small><div style="font-size:12px">${x.msg}</div><small style="color:#ffd23d">Apuesta 💰${x.bet} · caduca en ${Math.max(0,x.exp-C.rd)} jornadas</small></div><button class="cb go" data-a="chacc" data-v="${i}" style="font-size:8px">⚔ ACEPTAR</button><button class="cb red" data-a="chno" data-v="${i}" style="font-size:8px">✖</button></div>`).join('')}</div>`;
+ h+=retCard();h+=`<div class="cd"><div class="pxt sm">💶 VALOR DE MERCADO</div><div class="big" style="color:#ffd23d">${fmt(mv())} ${C.mvp?(mv()>=C.mvp?'<span style="color:#4ade80;font-size:18px">▲</span>':'<span style="color:#ff6a6a;font-size:18px">▼</span>'):''}</div><small style="color:#9fb0e0">${C.p.age} años · ${phase(C.p.age)} · 🗣 Química ${Math.round(chem())}% · 📱 ${fmt(sf())}</small></div>`;b.insertAdjacentHTML('afterbegin',h)}
+function p2me(b){b.insertAdjacentHTML('afterbegin',`<div class="cd wide"><div class="pxt sm">💶 VALOR Y EDAD</div><div class="rw" style="margin-top:6px"><div class="sp"><div class="big" style="color:#ffd23d">${fmt(mv())}</div><small style="color:#9fb0e0">Valor de mercado (nivel, edad, fama, redes y títulos)</small></div><div class="sp"><b style="font-size:18px">🎂 ${C.p.age} años</b><small style="display:block;color:#9fb0e0">${phase(C.p.age)} · Retiro aconsejado a los 34 · obligatorio a los 40</small></div></div></div>`+(C.p.age>=34?retCard():''))}
+ACT.retire=()=>{res.innerHTML=`<div class="pxt">🪑 ¿COLGAR LAS BOTAS?</div><p style="max-width:440px">Tu carrera terminará y pasarás a la historia. Recibirás 💎 según tu legado.</p><div class="opts"><button class="cb red" data-a="retire2">SÍ, ME RETIRO</button><button class="cb" data-a="retx">Seguir jugando</button></div>`;res.classList.remove('hidden');CRE=1};
+ACT.retx=()=>{res.classList.add('hidden');CRE=0};
+ACT.retire2=()=>{const L=Math.round(C.tot.titles*30+C.fame/10+Object.keys(C.ach).length*3+Math.min(sf()/5000,60)+C.season*2),g=Math.min(150,Math.max(5,Math.round(L/5)));
+ const h={name:C.p.name,age:C.p.age,ovr:ovrP(),team:C.t[C.myT].n,div:divOf(C.myT),fame:C.fame,titles:C.tot.titles,season:C.season,value:fmt(mv()),retired:true};save.crh=h;gem(g,'por tu legado');
+ res.innerHTML=`<div class="mic">🏆</div><div class="pxt">FIN DE UNA LEYENDA</div><p style="max-width:460px;font-size:14px;line-height:1.7"><b>${esc(C.p.name)}</b> se retira con ${C.p.age} años tras ${C.season} temporadas.<br>🏆 Títulos: ${C.tot.titles} · 📣 Fama ${C.fame} · 🏅 Logros ${Object.keys(C.ach).length}<br>📱 ${fmt(sf())} seguidores · 💶 Valor final ${fmt(mv())}</p><div class="big" style="color:#8fe8ff">+${g} 💎</div><button class="cb go" data-a="retend">VOLVER AL MENÚ</button>`;
+ C=null;save.cr=null;try{localStorage.removeItem(KEY)}catch(e){}store();CRE=1};
+ACT.retend=()=>{res.classList.add('hidden');CRE=0;sec.classList.add('hidden');renderMenu()};
+/* ---- paso de jornada ---- */
+function p2round(adv){if(!adv)return;C.sa=3+(C.cap?1:0);C.pa=2;
+ let inc=snInc();if(inc>0){pay(inc);if(inc>=150)log(`📱 Tus redes te dejan 💰${inc} esta jornada.`)}
+ const w=C.lastR&&C.lastR.mw;for(const k in C.sn){const x=C.sn[k];x.f=Math.max(0,Math.round(x.f*(1+(w?.012:.004)+Math.random()*.01)+C.fame*.15+(C.lastR&&C.lastR.nota>=8?x.f*.02:0)))}snCheck();
+ chatLine();C.mvp=C.mv0||0;C.mv0=mv();
+ C.inbox=C.inbox.filter(x=>x.exp>C.rd);if(C.inbox.length<3&&C.rd>0&&Math.random()<.35)genChallenge();
+ if(Math.random()<.25){const id=mateId();relSet(id,Math.random()<.5?1:-1)}}
+function p2done(o,mw,nota){const car=o.car,ids=mateIds();ids.forEach(i=>relSet(i,(mw?1:-1)+(nota!=null&&nota>=7.5?1:0)));
+ if(car&&car.ask){if(car.got>=2&&nota>=6.5)ids.forEach(i=>relSet(i,1));if(car.ask>=6&&nota!=null&&nota<5.5)ids.forEach(i=>relSet(i,-2))}
+ if(nota!=null&&nota>=8)snBump(.03);if(C.p.age>=33&&Math.random()<.15&&C.inj<=0){C.inj=r(1,2);log('🩹 Tu cuerpo ya no es el de antes: lesión por desgaste.')}}
+/* ---- más eventos ---- */
+const mn=()=>esc(mname(C.evm));
+EVT.push(
+{t:'🎂 CUMPLEAÑOS',x:()=>`${mn()} celebra su cumpleaños y te invita a la fiesta.`,o:[['Ir con un regalo (💰300)',()=>{if(C.money<300)return'No tienes dinero para el regalo, pero vas igualmente.';pay(-300);relSet(C.evm,10);C.mor=cl(C.mor+6,0,100);C.en=Math.max(0,C.en-12);return'Noche inolvidable: gran vínculo con '+mname(C.evm)+'.'}],['Pasar un rato',()=>{relSet(C.evm,4);C.mor=cl(C.mor+3,0,100);return'Cumples sin excederte.'}],['No ir',()=>{relSet(C.evm,-5);return'Se nota tu ausencia.'}]]},
+{t:'🥂 FIESTA VIP',x:()=>'Te invitan a la fiesta más exclusiva de la ciudad. Habrá cámaras.',o:[['Ir y disfrutar',()=>{C.fame+=10;C.en=Math.max(0,C.en-30);C.mor=cl(C.mor+10,0,100);if(Math.random()<.3){C.trust=cl(C.trust-6,0,100);snBump(-.02);return'Salen fotos tuyas de madrugada: el míster se enfada (-6 🤝).'}snBump(.02);return'Fama +10 y moral por las nubes.'}],['Ir un rato y volver',()=>{C.fame+=4;C.en=Math.max(0,C.en-8);return'Te dejas ver sin pasarte. Fama +4.'}],['Quedarme a descansar',()=>{C.en=Math.min(100,C.en+15);C.trust=cl(C.trust+2,0,100);return'El míster aprueba tu profesionalidad.'}]]},
+{t:'⚔ DISCUSIÓN EN EL VESTUARIO',x:()=>`${mn()} y otro compañero discuten a gritos antes del entreno.`,o:[['Mediar entre los dos',()=>{mateIds().forEach(i=>relSet(i,3));C.trust=cl(C.trust+2,0,100);return'Calmas el ambiente. Todos te lo agradecen.'}],[`Apoyar a ${'compañero'}`,()=>{relSet(C.evm,8);mateIds().filter(i=>i!==C.evm).forEach(i=>relSet(i,-4));return'Te ganas a uno, pero otros se enfadan.'}],['No meterme',()=>{mateIds().forEach(i=>relSet(i,-1));return'Prefieres no mojarte.'}]]},
+{t:'🧑‍🤝‍🧑 PIDEN CONSEJO',x:()=>`${mn()} te cuenta que está pasando una mala racha y te pide consejo.`,o:[['Escucharle',()=>{relSet(C.evm,8);C.en=Math.max(0,C.en-5);return'Se siente apoyado. Confianza +8.'}],['Dar un consejo rápido',()=>{relSet(C.evm,3);return'Le sirve de algo.'}],['No tengo tiempo',()=>{relSet(C.evm,-5);return'Se queda dolido.'}]]},
+{t:'🍕 CENA DEL MÍSTER',x:()=>`El míster ${C.co.n} organiza una cena de equipo.`,o:[['Ir y animar el ambiente',()=>{mateIds().forEach(i=>relSet(i,3));C.trust=cl(C.trust+4,0,100);return'Gran cena. Equipo más unido.'}],['No ir',()=>{C.trust=cl(C.trust-3,0,100);return'El míster toma nota.'}]]},
+{t:'🗞 RUMOR DE TRASPASO',x:()=>'Un periodista asegura que un grande te quiere fichar.',o:[['Alimentar el rumor',()=>{C.fame+=8;C.trust=cl(C.trust-4,0,100);mateIds().forEach(i=>relSet(i,-2));return'Fama +8, pero en el vestuario sientan mal tus palabras.'}],['Desmentirlo',()=>{C.trust=cl(C.trust+4,0,100);return'Muestras compromiso. Míster +4.'}],['«Solo pienso en jugar»',()=>{C.mor=cl(C.mor+2,0,100);C.fame+=2;return'Respuesta profesional.'}]]},
+{t:'💌 CARTA DE UN FAN',x:()=>'Un niño te escribe que eres su ídolo y sueña con jugar como tú.',o:[['Grabarle un vídeo',()=>{C.fame+=6;C.mor=cl(C.mor+5,0,100);snBump(.02);return'El vídeo se hace viral. ❤'}],['Firmarle una camiseta',()=>{C.mor=cl(C.mor+3,0,100);C.fame+=2;return'Se la mandas firmada.'}]]},
+{t:'📸 SESIÓN DE FOTOS',x:()=>'Una marca de ropa quiere hacerte una sesión de fotos (💰1200).',o:[['Aceptar',()=>{pay(1200);C.fame+=4;C.en=Math.max(0,C.en-10);snBump(.02);return'Cobras 💰1200 y ganas seguidores.'}],['Rechazar',()=>{C.en=Math.min(100,C.en+5);return'Prefieres descansar.'}]]},
+{t:'🎮 STREAM CON FANS',x:()=>'Te proponen un directo jugando con tus seguidores.',c:()=>sf()>=300,o:[['Hacer el directo',()=>{C.en=Math.max(0,C.en-8);C.fame+=3;snGain('yt',20+C.sn.yt.f*.08);snCheck();return'Gran directo: ganas suscriptores.'}],['No hoy',()=>'Otro día será.']]},
+{t:'🕵 POLÉMICA ANTIGUA',x:()=>'Un mensaje antiguo tuyo ha reaparecido en redes y la gente se enfada.',c:()=>sf()>=1000,o:[['Pedir perdón públicamente',()=>{C.trust=cl(C.trust+2,0,100);snBump(-.01);return'Ofreces disculpas. El tema se calma.'}],['Defenderte',()=>{if(Math.random()<.5){C.fame+=6;return'Tu defensa convence. ¡Fama +6!'}snBump(-.05);C.trust=cl(C.trust-3,0,100);return'Empeoras las cosas: pierdes seguidores.'}],['Borrar la publicación',()=>{snBump(-.02);return'Te critican por esconderte.'}]]},
+{t:'🏢 EL DESPACHO DEL MÍSTER',x:()=>`El míster ${C.co.n} te llama: «Necesito más compromiso de ti.»`,c:()=>C.trust<45,o:[['Prometer trabajar más',()=>{C.trust=cl(C.trust+7,0,100);C.en=Math.max(0,C.en-8);return'El míster respira aliviado. +7 🤝.'}],['Discutir',()=>{C.trust=cl(C.trust-6,0,100);C.fame+=2;return'Se tensa la relación.'}]]},
+{t:'💸 AMIGO EN APUROS',x:()=>'Un viejo amigo te pide 1000 💰 prestados.',c:()=>C.money>=1000,o:[['Prestárselo',()=>{pay(-1000);if(Math.random()<.5){pay(1500);return'Te lo devuelve con intereses: +500 neto.'}C.mor=cl(C.mor+2,0,100);return'No sabes si lo recuperarás, pero ayudas.'}],['Decir que no',()=>{C.mor=cl(C.mor-2,0,100);return'Se acaba la amistad un poco.'}]]},
+{t:'🎙 INVITACIÓN A UN PODCAST',x:()=>'Un podcast deportivo muy famoso te invita.',o:[['Ir',()=>{C.fame+=7;C.en=Math.max(0,C.en-5);snBump(.015);return'Gran entrevista: fama +7.'}],['Declinar',()=>'Otra vez será.']]},
+{t:'🎖 EL EQUIPO TE QUIERE DE CAPITÁN',x:()=>'Tus compañeros proponen que seas el capitán.',c:()=>!C.cap&&chem()>=60&&C.trust>=55,o:[['Aceptar la capitanía',()=>{C.cap=1;C.trust=cl(C.trust+5,0,100);mateIds().forEach(i=>relSet(i,3));gem(3,'por ser capitán');return'¡Eres el capitán! +1 acción social por jornada.'}],['Dejar que lo sea otro',()=>{C.mor=cl(C.mor+1,0,100);return'Prefieres no cargar con esa responsabilidad.'}]]},
+{t:'🚗 COCHE DE LUJO',x:()=>'Un concesionario te ofrece comprar un deportivo (💰3000).',c:()=>C.money>=3000,o:[['Comprarlo',()=>{pay(-3000);C.fame+=8;C.mor=cl(C.mor+8,0,100);snBump(.03);return'Todos hablan de tu coche. Fama +8.'}],['Ahorrar',()=>{C.trust=cl(C.trust+2,0,100);return'Muy sensato. El míster lo valora.'}]]}
+);
+EVT.find(e=>e.t.includes('DISCUSIÓN')).o[1][0]='Apoyar a '+'uno de ellos';
+
+const _nr=nextRound;nextRound=function(adv){try{p2round(adv)}catch(e){console.error(e)}return _nr(adv)};
+const _off=offers;offers=function(){_off();try{if(C.sum&&C.p.age>=34){const b=$('#cbody');if(b){if(C.p.age>=40)b.innerHTML='';b.insertAdjacentHTML('afterbegin',retCard())}}}catch(e){}};
+window.CAREER_PUB=sv=>{const c=sv.cr&&sv.cr.p&&sv.cr.t?sv.cr:null;if(!c)return sv.crh||null;return{name:c.p.name,age:c.p.age,ovr:ovrSt(c.p.st,c.p.pos),team:c.t[c.myT].n,div:c.dv.findIndex(d=>d.includes(c.myT)),fame:c.fame,titles:c.tot.titles,season:c.season,value:fmt(mvOf(c))}};
 /* ---- botón del menú ---- */
 const tile=document.createElement('button');tile.className='tile';tile.id='b-career';tile.innerHTML='<span class="ti">🏆</span><b>CARRERA</b><small>Sé una estrella</small>';tile.style.background='linear-gradient(#e8a400,#8a5a00)';
 const tl=$('.mtiles');if(tl)tl.insertBefore(tile,tl.firstChild);tile.onclick=openHub;
-if(C)try{migrate()}catch(e){console.warn(e)}
+loadC();if(C)try{migrate()}catch(e){console.warn(e)}
 window.CAREER_DBG={get C(){return C},ACT,draw,nextFx};
 })();

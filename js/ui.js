@@ -1,7 +1,8 @@
 // ===== Menús, equipo, gacha =====
-const show=id=>{$$('.screen').forEach(s=>s.classList.add('hidden'));if(id){const e=$(id);e.classList.remove('hidden');mountPreviews(e)}};
+const LDS=new Set(['#career','#gacha','#pick','#team','#lineup','#teams','#profile','#account','#social','#how']);
+const show=id=>{const was=id&&$(id)&&!$(id).classList.contains('hidden');$$('.screen').forEach(s=>s.classList.add('hidden'));if(id){const e=$(id);e.classList.remove('hidden');mountPreviews(e);if(!was&&LDS.has(id)&&window.LDR&&!window.NOLOAD)LDR.flash(700)}};
 const myCard=()=>cardHTML(save.sel,save.owned[save.sel]);
-function fillMenu(){$('#mPl').textContent=save.played;$('#mWi').textContent=save.wins;$('#mRo').textContent=Object.keys(save.owned).length+'/'+CH.length;$('#mUser').textContent=window.FBX&&FBX.user?FBX.user.name:'Invitado';
+function fillMenu(){try{window.dailyGems&&dailyGems()}catch(e){}$$('.gm').forEach(e=>e.textContent=save.gems||0);$('#mPl').textContent=save.played;$('#mWi').textContent=save.wins;$('#mRo').textContent=Object.keys(save.owned).length+'/'+CH.length;$('#mUser').textContent=window.FBX&&FBX.user?FBX.user.name:'Invitado';
  $('#mlegs').innerHTML=SPEC.slice().sort(()=>Math.random()-.5).slice(0,3).map((i,k)=>`<div class="lg" style="--c:${RCOL[CH[i].pw]};animation-delay:${k*.5}s"><img src="${figImg(i,CH[i].jc)}"><b>${CH[i].name}</b><small>${CH[i].title}</small></div>`).join('')}
 function menuFx(){const cv=$('#mcv');if(!cv||menuFx.on)return;menuFx.on=true;const g=cv.getContext('2d'),P=[],cr=[];
  for(let i=0;i<70;i++)P.push({x:Math.random(),y:Math.random(),s:.4+Math.random()*1.4,v:.0004+Math.random()*.0012,c:['#ffd23d','#ff7a1a','#b266ff','#6fdcff'][i%4],p:Math.random()*6});
@@ -129,14 +130,16 @@ async function enterAccount(u,isNew,carry){let d=null;
  if(!isNew){try{d=await FBX.loadSave()}catch(e){}}
  if(!d||!d.owned){try{d=JSON.parse(localStorage.getItem('gh3_'+u.uid))}catch(e){}}
  if(isNew||!d||!d.owned){d=(carry&&carry.owned)?carry:newSave();d.welcome=1}
- d.name=u.name;adoptSave(d,'gh3_'+u.uid);localStorage.removeItem('gh_guest');store();try{await FBX.saveNow(save)}catch(e){}
+ d.name=u.name;adoptSave(d,'gh3_'+u.uid);localStorage.removeItem('gh_guest');store();
+ try{if(window.ensureName)await ensureName(u,!!save.welcome,$('#a-name')&&authTab==='up'?$('#a-name').value.trim():'')}catch(e){console.warn(e)}
+ try{await FBX.saveNow(save)}catch(e){}
  applyBtn();$('#b-snd').textContent=save.snd?'🔊':'🔇';
  if(save.welcome){gReset();show('#gacha');$('#gtip').textContent='🎁 ¡Bienvenido! Abre tu SOBRE ÉPICO GRATIS de 10 jugadores'}else renderMenu()}
 function startGuest(){let d=null;try{d=JSON.parse(localStorage.getItem('gh3'))}catch(e){}adoptSave(d&&d.owned?d:newSave(),'gh3');localStorage.setItem('gh_guest','1');FBX.user=null;applyBtn();$('#b-snd').textContent=save.snd?'🔊':'🔇';renderMenu()}
 $('#at-in').onclick=()=>setTab('in');$('#at-up').onclick=()=>setTab('up');
 $('#a-go').onclick=async()=>{if(busy)return;const email=$('#a-mail').value.trim().toLowerCase(),pass=$('#a-pass').value,name=$('#a-name').value.trim();
  if(!/^\S+@\S+\.\S+$/.test(email))return amsg('Escribe un correo válido');if(pass.length<6)return amsg('La contraseña debe tener mínimo 6 caracteres');
- if(authTab==='up'){if(!name)return amsg('Elige un nombre de jugador');if(pass!==$('#a-pass2').value)return amsg('Las contraseñas no coinciden')}
+ if(authTab==='up'){if(!name)return amsg('Elige un nombre de jugador');if(window.validName&&!validName(name))return amsg('El nombre debe tener 3-14 letras, números o _ (sin espacios)');if(pass!==$('#a-pass2').value)return amsg('Las contraseñas no coinciden')}
  busy=true;$('#a-go').disabled=true;amsg('Un momento...',1);
  try{if(authTab==='up'){const carry=!FBX.user&&localStorage.getItem('gh_guest')?JSON.parse(JSON.stringify(save)):null;const u=await FBX.signUp(name,email,pass);await enterAccount(u,true,carry)}
   else{const u=await FBX.signIn(email,pass);await enterAccount(u,false)}}
@@ -150,12 +153,12 @@ $('#a-reset').onclick=async()=>{const email=$('#a-mail').value.trim();if(!email)
 // cuenta
 FBX.onStatus=s=>{const e=$('#ac-sync');if(e&&FBX.user)e.textContent=s};
 function renderAcc(){const u=FBX.user;$('#ac-name').textContent=u?u.name:'Invitado';$('#ac-mail').textContent=u?u.email:'Sin cuenta: tu progreso solo está en este dispositivo';
- $('#ac-stats').innerHTML=`<span>🪙 ${save.coins}</span><span>🎮 ${save.played}</span><span>🏆 ${save.wins}</span><span>👥 ${Object.keys(save.owned).length}/${CH.length}</span>`;
+ $('#ac-stats').innerHTML=`<span>🪙 ${save.coins}</span><span>💎 ${save.gems||0}</span><span>🎮 ${save.played}</span><span>🏆 ${save.wins}</span><span>👥 ${Object.keys(save.owned).length}/${CH.length}</span>`;
  $('#ac-sync').textContent=u?(FBX.status||'☁ Guardado automático activado'):'';$('#ac-user').style.display=u?'':'none';$('#ac-guest').style.display=u?'none':'';
- $('#ac-newname').value=u?u.name:'';$('#ac-mode').textContent=FBX.mode==='firebase'?'Servidor: Firebase':'Servidor: modo demo (local)';$('#ac-del').textContent='🗑 BORRAR PROGRESO';$('#ac-del').dataset.s=''}
+ $('#ac-newname').value=u?u.name:'';$('#ac-ren').textContent=window.renameLabel?renameLabel():'✏ CAMBIAR NOMBRE';$('#ac-mode').textContent=FBX.mode==='firebase'?'Servidor: Firebase':'Servidor: modo demo (local)';$('#ac-del').textContent='🗑 BORRAR PROGRESO';$('#ac-del').dataset.s=''}
 $('#b-acc').onclick=()=>{renderAcc();show('#account')};
 $('#ac-now').onclick=async()=>{try{await FBX.saveNow(save);$('#ac-sync').textContent='☁ Sincronizado ✓'}catch(e){$('#ac-sync').textContent='⚠ No se pudo sincronizar'}};
-$('#ac-ren').onclick=async()=>{const n=$('#ac-newname').value.trim().slice(0,14);if(!n||!FBX.user)return;try{await FBX.updateName(n);save.name=n;store();renderAcc()}catch(e){$('#ac-sync').textContent='⚠ '+e.message}};
+$('#ac-ren').onclick=async()=>{const n=$('#ac-newname').value.trim().slice(0,14);if(!n||!FBX.user)return;try{await window.renameFlow(n);renderAcc()}catch(e){$('#ac-sync').textContent='⚠ '+e.message}};
 $('#ac-out').onclick=async()=>{try{await FBX.flush()}catch(e){}await FBX.signOut();adoptSave(newSave(),'gh3_nouser');showAuth('in')};
 $('#ac-create').onclick=()=>showAuth('up');
 $('#ac-del').onclick=e=>{const b=e.currentTarget;if(b.dataset.s!=='1'){b.dataset.s='1';b.textContent='¿SEGURO? TOCA OTRA VEZ';return}const n=newSave();n.name=save.name;adoptSave(n);store();renderAcc();$('#ac-sync').textContent='Progreso reiniciado'};
@@ -187,7 +190,7 @@ const enCol=e=>e>=60?'#34d399':e>=30?'#fbbf24':'#ef4444';
 const benchPort=(id,col)=>`<div class="bnp">${portrait(id,1,col)}</div>`;
 const shortN=n=>n.length>11?n.slice(0,10)+'…':n;
 function renderBench(){const el=$('#bench'),box=$('#pbox');
- if(!G||G.n!==3){el.classList.add('hidden');box.classList.remove('wide');return}
+ if(!G||G.n!==3||G.car){el.classList.add('hidden');box.classList.remove('wide');return}
  box.classList.add('wide');el.classList.remove('hidden');
  const court=G.P.slice(0,3),sug=suggestSubs(),ids=benchIds().sort((a,b)=>CH[b].rar-CH[a].rar||ovrOf(statsOf(b,1,save.owned[b].st))-ovrOf(statsOf(a,1,save.owned[a].st)));
  const tired=court.filter(p=>p.en<30).length;
@@ -242,5 +245,5 @@ function renderProfile(){const c=save.career,own=Object.keys(save.owned).length,
 $('#b-prof').onclick=()=>{renderProfile();show('#profile')};$('#pf-back').onclick=()=>renderMenu();
 // ---- arranque ----
 requestAnimationFrame(loop);
-loadImgs().then(async()=>{$('#b-snd').textContent=save.snd?'🔊':'🔇';applyBtn();let u=null,fe=null;try{u=await FBX.init()}catch(e){fe=e;console.warn(e)}
+Promise.all([loadImgs(),window.bootWait?bootWait(5000):0]).then(async()=>{$('#b-snd').textContent=save.snd?'🔊':'🔇';applyBtn();let u=null,fe=null;try{u=await FBX.init()}catch(e){fe=e;console.warn(e)}
  if(u)await enterAccount(u,false);else if(localStorage.getItem('gh_guest'))startGuest();else{showAuth();if(fe)amsg('No se pudo conectar con Firebase. Revisa tu configuración o juega como invitado.')}});

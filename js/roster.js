@@ -64,8 +64,9 @@ const TEAMS=(()=>{const by=(a,b)=>b.rar-a.rar||a.id-b.id,Gd=CH.filter(c=>c.id<56
  return T.map((m,i)=>{const ids=m.map(c=>c.id);return{name:TEAMN[i%TEAMN.length],col:PAL[(i*5+2)%PAL.length],ids,ovr:Math.round(ids.reduce((a,id)=>a+ovrOf(statsOf(id,1,0)),0)/3)}})})();
 // ---- guardado ----
 let SAVEKEY='gh3';
-const newSave=()=>({coins:800,owned:{12:{lvl:1,st:0},0:{lvl:1,st:0},2:{lvl:1,st:0},51:{lvl:1,st:0},9:{lvl:1,st:0}},sel:12,wins:0,played:0,snd:1,hats:{},hat:null,cfg:{sfx:1,mus:1,shake:1,taunt:1,stad:0}});
+const newSave=()=>({coins:800,gems:0,owned:{12:{lvl:1,st:0},0:{lvl:1,st:0},2:{lvl:1,st:0},51:{lvl:1,st:0},9:{lvl:1,st:0}},sel:12,wins:0,played:0,snd:1,hats:{},hat:null,cfg:{sfx:1,mus:1,shake:1,taunt:1,stad:0}});
 function fixSave(){
+ if(save.gems==null)save.gems=0;
  if(!save.hidFix){save.hidFix=1;save.lineup=null;if(!save.owned[save.sel])save.sel=+Object.keys(save.owned)[0]}
  if(!save.hatOf)save.hatOf={};if(save.hat!=null){if(save.hatOf[save.sel]==null)save.hatOf[save.sel]=save.hat;save.hat=null}
  if(!save.career)save.career={games:0,wins:0,pts:0,reb:0,ast:0,stl:0,blk:0,dnk:0,tpm:0};if(!save.cpts)save.cpts={};if(!save.used)save.used={};const need={PG:12,SG:0,SF:2,PF:51,C:9};for(const p in need)if(!Object.keys(save.owned).some(i=>CH[i].pos===p))save.owned[need[p]]={lvl:1,st:0};
@@ -77,7 +78,7 @@ let save=(()=>{try{const s=JSON.parse(localStorage.getItem(SAVEKEY));if(s&&s.own
 fixSave();
 function adoptSave(o,key){if(key)SAVEKEY=key;for(const k of Object.keys(save))delete save[k];Object.assign(save,o);fixSave()}
 const cfgv=k=>!save.cfg||save.cfg[k]!==0;
-const store=()=>{try{localStorage.setItem(SAVEKEY,JSON.stringify(save))}catch(e){}$$('.cn').forEach(e=>e.textContent=save.coins);if(window.FBX&&FBX.user)FBX.queueSave(save)};
+const store=()=>{try{localStorage.setItem(SAVEKEY,JSON.stringify(save))}catch(e){}$$('.cn').forEach(e=>e.textContent=save.coins);$$('.gm').forEach(e=>e.textContent=save.gems||0);if(window.FBX&&FBX.user)FBX.queueSave(save)};
 const MAXLV=10,MAXST=5,upCost=lv=>80*lv;
 const myStats=id=>{const o=save.owned[id];return statsOf(id,o.lvl,o.st)};
 const PACKS=[{n:'SOBRE BÁSICO',cost:100,cnt:1,min:0,b:0,e:'📦',lm:1},{n:'SOBRE PLATA',cost:450,cnt:3,min:1,b:.15,e:'🥈',lm:2},{n:'SOBRE ORO',cost:1000,cnt:5,min:1,b:.35,e:'🥇',lm:3},{n:'SOBRE LEYENDA',cost:2500,cnt:5,min:2,b:.8,e:'👑',lm:4},{n:'SOBRE DE BIENVENIDA',cost:0,cnt:10,min:2,max:2,all:1,nl:1,b:0,e:'🎁',welcome:1}];
