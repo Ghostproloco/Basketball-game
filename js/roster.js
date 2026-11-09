@@ -78,7 +78,7 @@ let save=(()=>{try{const s=JSON.parse(localStorage.getItem(SAVEKEY));if(s&&s.own
 fixSave();
 function adoptSave(o,key){if(key)SAVEKEY=key;for(const k of Object.keys(save))delete save[k];Object.assign(save,o);fixSave()}
 const cfgv=k=>!save.cfg||save.cfg[k]!==0;
-const store=()=>{try{localStorage.setItem(SAVEKEY,JSON.stringify(save))}catch(e){}$$('.cn').forEach(e=>e.textContent=save.coins);$$('.gm').forEach(e=>e.textContent=save.gems||0);if(window.FBX&&FBX.user)FBX.queueSave(save)};
+const store=()=>{try{if(window.__adm)window.__adm()}catch(e){}try{localStorage.setItem(SAVEKEY,JSON.stringify(save))}catch(e){}$$('.cn').forEach(e=>e.textContent=save.coins);$$('.gm').forEach(e=>e.textContent=save.gems||0);if(window.FBX&&FBX.user)FBX.queueSave(save)};
 const MAXLV=10,MAXST=5,upCost=lv=>80*lv;
 const myStats=id=>{const o=save.owned[id];return statsOf(id,o.lvl,o.st)};
 const PACKS=[{n:'SOBRE BÁSICO',cost:100,cnt:1,min:0,b:0,e:'📦',lm:1},{n:'SOBRE PLATA',cost:450,cnt:3,min:1,b:.15,e:'🥈',lm:2},{n:'SOBRE ORO',cost:1000,cnt:5,min:1,b:.35,e:'🥇',lm:3},{n:'SOBRE LEYENDA',cost:2500,cnt:5,min:2,b:.8,e:'👑',lm:4},{n:'SOBRE DE BIENVENIDA',cost:0,cnt:10,min:2,max:2,all:1,nl:1,b:0,e:'🎁',welcome:1}];
