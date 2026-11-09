@@ -33,7 +33,7 @@ function migrate(){if(!C)return;C.v=3;
  C.tot=Object.assign({g:0,pts:0,reb:0,ast:0,stl:0,blk:0,w:0,l:0,street:0,streetW:0,press:0,titles:0,best:0,maxp:0,dbl:0,derby:0},C.tot||{});
  C.ach=C.ach||{};C.res=C.res||[];C.streak=C.streak||0;C.bst=C.bst||0;C.aw=C.aw||[];C.cons=C.cons||0;C.own=C.own||{};C.hist=C.hist||[];C.log=C.log||[];
  if(C.p.num==null)C.p.num=r(1,99);if(!C.p.sty)C.p.sty='eq';if(C.bd==null)C.bd=divOf(C.myT);if(C.rival==null)setRival();if(C.phase==null)C.phase='hub';
- C.rel=C.rel||{};if(C.sa==null)C.sa=3;if(C.pa==null)C.pa=2;if(!C.sn){const b=100+(C.fame||0)*30;C.sn={ig:{f:Math.round(b)},yt:{f:Math.round(b*.2)},tt:{f:Math.round(b*.7)},x:{f:Math.round(b*.4)}}}C.mer=C.mer||0;C.sm=C.sm||[];C.inbox=C.inbox||[];C.chat=C.chat||[];C.mvp=C.mvp||0}
+ C.rel=C.rel||{};if(C.sa==null)C.sa=3;if(C.pa==null)C.pa=2;if(!C.sn){const b=100+(C.fame||0)*30;C.sn={ig:{f:Math.round(b)},yt:{f:Math.round(b*.2)},tt:{f:Math.round(b*.7)},x:{f:Math.round(b*.4)}}}C.mer=C.mer||0;C.sm=C.sm||[];C.inbox=C.inbox||[];C.chat=C.chat||[];C.mvp=C.mvp||0;C.sp=C.sp||[];C.ms=C.ms||[];if(C.cm==null)C.cm=1;fillMs()}
 function setRival(){const d=divOf(C.myT),c=C.dv[d].filter(t=>t!==C.myT);C.rival=c.length?pick(c):null}
 /* ---- mi jugador usa la cara/personaje de un ÉPICO (se aplica solo durante el partido) ---- */
 let ORIG=null;
@@ -111,8 +111,8 @@ function hideHud(){$('#hud').classList.add('hidden');$('#controls').classList.ad
 function openHub(){hideHud();loadC();if(!C)return create();migrate();if(C.phase==='offers')return offers();show('#career');draw()}
 function draw(){const old=$('#cbody'),sc=old&&DTAB===TAB?old.scrollTop:0,t=C.t[C.myT],d=divOf(C.myT),R=C.fx[d].length;
  sec.innerHTML=`<div class="chd">${logo(C.myT,42)}<div><b>${t.n}</b><small style="color:${DC[d]}">DIV. ${DN[d]} · Temp ${C.season} · Jornada ${Math.min(C.rd+1,R)}/${R}${C.inj>0?' · 🩹 lesionado':''} · 🎂 ${C.p.age} años</small></div><div class="chips">${bar('⚡ ENERGÍA',C.en,'#4ade80')}${bar('😊 MORAL',C.mor,'#ffb23d')}${bar('🤝 MÍSTER',C.trust,'#5aa0ff')}<div class="chip">📣 FAMA<b>${C.fame}</b></div><div class="chip">💶 VALOR<b>${fmt(mv())}</b></div><div class="chip">💰 DINERO<b>${C.money}</b></div></div></div>
- <div class="tabs">${[['home','🏠 INICIO'],['liga','🏆 LIGA'],['team','👥 EQUIPO'],['me','🧍 YO'],['train','💪 ENTRENO'],['shop','🛒 TIENDA'],['ach','🏅 LOGROS'],['vest','🗣 VESTUARIO'],['soc','📱 REDES'],['prensa','📰 PRENSA']].map(([k,l])=>`<button data-a="tab" data-v="${k}" class="${TAB==k?'on':''}">${l}</button>`).join('')}<button data-a="exit" style="flex:.4">⏏ MENÚ</button></div><div id="cbody"></div>`;
- ({home:vHome,liga:vLiga,team:vTeam,me:vMe,train:vTrain,shop:vShop,ach:vAch,prensa:vPrensa,vest:vVest,soc:vSoc})[TAB]($('#cbody'));if(TAB==='home')p2home($('#cbody'));if(TAB==='me')p2me($('#cbody'));paint(sec);const nb=$('#cbody');if(nb)nb.scrollTop=sc;DTAB=TAB}
+ <div class="tabs">${[['home','🏠 INICIO'],['liga','🏆 LIGA'],['team','👥 EQUIPO'],['me','🧍 YO'],['train','💪 ENTRENO'],['shop','🛒 TIENDA'],['ach','🏅 LOGROS'],['vest','🗣 VESTUARIO'],['soc','📱 REDES'],['biz','💼 NEGOCIOS'],['prensa','📰 PRENSA']].map(([k,l])=>`<button data-a="tab" data-v="${k}" class="${TAB==k?'on':''}">${l}</button>`).join('')}<button data-a="exit" style="flex:.4">⏏ MENÚ</button></div><div id="cbody"></div>`;
+ ({home:vHome,liga:vLiga,team:vTeam,me:vMe,train:vTrain,shop:vShop,ach:vAch,prensa:vPrensa,vest:vVest,soc:vSoc,biz:vBiz})[TAB]($('#cbody'));if(TAB==='home')p2home($('#cbody'));if(TAB==='me')p2me($('#cbody'));paint(sec);const nb=$('#cbody');if(nb)nb.scrollTop=sc;DTAB=TAB}
 ACT.tab=v=>{TAB=v;draw()};ACT.exit=()=>{persist();LIVE=null;sec.classList.add('hidden');renderMenu()};
 /* ---- calendario ---- */
 function nextFx(){const d=divOf(C.myT),R=C.fx[d][C.rd];
@@ -240,11 +240,11 @@ function done(o){const fx=nextFx(),myHome=fx.home,sa=o.mine,sb=o.theirs,mw=sa>sb
  T.g++;if(mw){T.w++;C.streak++;C.bst=Math.max(C.bst,C.streak);if(dby){T.derby++;C.fame+=6;C.mor=cl(C.mor+3,0,100);log('🔥 ¡Ganas el derbi contra '+C.t[fx.opp].n+'!')}}else{T.l++;C.streak=0}
  if(C.pk=='con'&&!mw&&o.played)C.fame=Math.max(0,C.fame-5);if(C.pk=='pro'&&!mw&&o.played){C.fame=Math.max(0,C.fame-8);C.trust=cl(C.trust-4,0,100);log('Tu provocación te sale cara: te critican en la prensa.')}if(C.pk=='pro'&&mw&&o.played){C.fame+=10;log('¡Cumples tu palabra y la afición te adora!')}C.pk=null;
  C.en=Math.max(0,C.en-(m&&o.played?28:6));if(o.played&&C.en<20&&Math.random()<.2){C.inj=r(1,2)-(C.own[6]?1:0);if(C.inj>0)log('🩹 Te lesionas por el cansancio acumulado.');else C.inj=0}
- const pr=Math.round(DSAL[divOf(C.myT)]*(.6+ovrP()/100)*(mw?1.4:1)*(C.own[5]?1.2:1)*(po?1.5:1));pay(pr);C.lastR={car:o.car,mw,nota,sa,sb,m,pr,opp:fx.opp,played:o.played,po,dby};
+ const pr=Math.round(DSAL[divOf(C.myT)]*(.6+ovrP()/100)*(mw?1.4:1)*(C.own[5]?1.2:1)*(C.cm||1)*(po?1.5:1));pay(pr);C.lastR={car:o.car,mw,nota,sa,sb,m,pr,opp:fx.opp,played:o.played,po,dby};
  C.res.push({opp:fx.opp,sa,sb,w:mw,nota,po,home:myHome});if(C.res.length>40)C.res.shift();
  log(`${po?'🏆 '+poName(fx.stage)+': ':''}${mw?'Victoria':'Derrota'} ${sa}-${sb} ${myHome?'vs':'en'} ${C.t[fx.opp].n}${nota?' · nota '+nota:''}`);if(mw&&sa-sb>=15)log(`${C.t[C.myT].n} aplasta a ${C.t[fx.opp].n}: «Exhibición total»`);
  if(po&&C.pl.stage===2&&C.pl.champ===C.myT)log('🏆 ¡'+C.t[C.myT].n+' gana los playoffs!');
- p2done(o,mw,nota);checkAch();persist();showRes()}
+ p2done(o,mw,nota);try{msTick(C.lastR)}catch(e){console.error(e)}checkAch();persist();showRes()}
 function showRes(){const R=C.lastR,m=R.m,n=R.nota;res.innerHTML=`<div class="pxt" style="font-size:12px">${R.po?'🏆 PLAYOFFS · ':''}${R.mw?'🏆 VICTORIA':'DERROTA'}${R.dby&&R.mw?' · 🔥 DERBI':''}</div><div class="rw" style="gap:14px">${logo(C.myT,56)}<span class="big">${R.sa} - ${R.sb}</span>${logo(R.opp,56)}</div>
  ${m?`<div class="cd" style="min-width:270px"><div class="pxt sm">TU ACTUACIÓN</div><div class="big" style="color:${n>=7?'#4ade80':n>=5.5?'#ffd23d':'#ff6a6a'}">${n.toFixed(1)}</div><div style="font-size:12px">PTS ${m.pts} · REB ${m.reb} · AST ${m.ast} · ROB ${m.stl} · TAP ${m.blk}</div>${R.car&&R.car.ask?`<div style="font-size:12px;margin-top:5px;color:#9fb0e0">🙋 Pases pedidos ${R.car.ask} · recibidos <b style="color:#4ade80">${R.car.got}</b> · ignorado ${R.car.ign}</div>`:''}</div>`:`<div class="cd">${C.inj>0?'Lesionado: no juegas':'No has jugado minutos hoy.'}</div>`}
  <div class="cd" style="max-width:440px;font-size:12px">🗣 Míster ${C.co.n}: «${coachMsg(n)}»<br><small style="color:#9fb0e0">+💰${R.pr}</small></div><button class="cb go" data-a="press">${m?'🎤 RUEDA DE PRENSA':'CONTINUAR ▶'}</button>`;res.classList.remove('hidden');CRE=1;paint(res)}
@@ -377,7 +377,7 @@ const POSTS=[
  {k:'hl',e:'🏀',n:'Resumen del partido',d:'Necesitas nota ≥ 7 en el último partido',f:()=>{if(!C.lastR||!C.lastR.nota||C.lastR.nota<7)return'No tienes material bueno, juega mejor primero.';const g=(40+sf()*.02)*(1+C.lastR.nota/10);['ig','yt','tt'].forEach(k=>snGain(k,g/3));return`Tus highlights vuelan: +${fmt(g)} seguidores entre todas las redes.`}},
  {k:'sort',e:'🎁',n:'Sorteo de camisetas',d:'💰400 · +seguidores en todo',f:()=>{if(C.money<400)return'No tienes 💰400.';pay(-400);const t=Math.max(40,Math.round(sf()*.06));Object.keys(C.sn).forEach(k=>snGain(k,t/4));C.fame+=2;return`El sorteo arrasa: +${fmt(t)} seguidores.`}},
  {k:'pat',e:'🤝',n:'Post patrocinado',d:'Necesita 2K seguidores · dinero',f:()=>{if(sf()<2000)return'Aún eres demasiado pequeño para marcas (2K).';const m=Math.round(sf()*.05);if(Math.random()<.12){snBump(-.02);return'Tus fans critican el anuncio: pierdes seguidores y no cobras.'}pay(m);return`La marca te paga 💰${m}.`}}];
-ACT.post=v=>{const p=POSTS.find(x=>x.k===v);if(!p||C.pa<1)return toastC('Hoy ya has publicado lo suficiente');const before=sf();const t=p.f();if(/^(Estás agotado|No tienes|Aún eres|No tienes material)/.test(t))return toastC(t);C.pa--;C.lastPost=t;log('📱 '+t);snCheck();persist();draw();toastC('📱 '+t)};
+ACT.post=v=>{const p=POSTS.find(x=>x.k===v);if(!p||C.pa<1)return toastC('Hoy ya has publicado lo suficiente');const before=sf();const t=p.f();if(/^(Estás agotado|No tienes|Aún eres|No tienes material)/.test(t))return toastC(t);C.pa--;C.lastPost=t;try{msTick({post:1})}catch(e){}log('📱 '+t);snCheck();persist();draw();toastC('📱 '+t)};
 const MER=[[2500,1000,'👕 Camiseta con tu nombre'],[8000,10000,'🧢 Colección de ropa'],[25000,50000,'🏷 Marca propia']];
 ACT.mer=()=>{const m=MER[C.mer];if(!m||C.money<m[0]||sf()<m[1])return toastC('Todavía no puedes');pay(-m[0]);C.mer++;C.fame+=4;log('🛍 Lanzas: '+m[2]);persist();draw();toastC('🛍 ¡Nuevo negocio!')};
 function vSoc(b){const t=sf(),inc=snInc(),m=MER[C.mer];
@@ -405,7 +405,7 @@ ACT.retire2=()=>{const L=Math.round(C.tot.titles*30+C.fame/10+Object.keys(C.ach)
 ACT.retend=()=>{res.classList.add('hidden');CRE=0;sec.classList.add('hidden');renderMenu()};
 /* ---- paso de jornada ---- */
 function p2round(adv){if(!adv)return;C.sa=3+(C.cap?1:0);C.pa=2;
- let inc=snInc();if(inc>0){pay(inc);if(inc>=150)log(`📱 Tus redes te dejan 💰${inc} esta jornada.`)}
+ let inc=snInc();C.sp=C.sp.filter(x=>{const d=SPON.find(s=>s.id===x.id);if(d)inc+=d.inc;x.left--;if(x.left<=0){log(`🤝 Termina tu patrocinio con ${d?d.n:''}.`);return false}return true});if(inc>0){pay(inc);if(inc>=150)log(`📱 Tus redes te dejan 💰${inc} esta jornada.`)}
  const w=C.lastR&&C.lastR.mw;for(const k in C.sn){const x=C.sn[k];x.f=Math.max(0,Math.round(x.f*(1+(w?.012:.004)+Math.random()*.01)+C.fame*.15+(C.lastR&&C.lastR.nota>=8?x.f*.02:0)))}snCheck();
  chatLine();C.mvp=C.mv0||0;C.mv0=mv();
  C.inbox=C.inbox.filter(x=>x.exp>C.rd);if(C.inbox.length<3&&C.rd>0&&Math.random()<.35)genChallenge();
@@ -437,6 +437,33 @@ EVT.find(e=>e.t.includes('DISCUSIÓN')).o[1][0]='Apoyar a '+'uno de ellos';
 const _nr=nextRound;nextRound=function(adv){try{p2round(adv)}catch(e){console.error(e)}return _nr(adv)};
 const _off=offers;offers=function(){_off();try{if(C.sum&&C.p.age>=34){const b=$('#cbody');if(b){if(C.p.age>=40)b.innerHTML='';b.insertAdjacentHTML('afterbegin',retCard())}}}catch(e){}};
 window.CAREER_PUB=sv=>{const c=sv.cr&&sv.cr.p&&sv.cr.t?sv.cr:null;if(!c)return sv.crh||null;return{name:c.p.name,age:c.p.age,ovr:ovrSt(c.p.st,c.p.pos),team:c.t[c.myT].n,div:c.dv.findIndex(d=>d.includes(c.myT)),fame:c.fame,titles:c.tot.titles,season:c.season,value:fmt(mvOf(c))}};
+/* ================= NEGOCIOS: agente, patrocinadores y misiones ================= */
+const MT=[
+ {k:'pts',t:n=>`Anota ${n}+ puntos en un partido`,n:()=>r(10,24),f:(n,R)=>R.m&&R.m.pts>=n},
+ {k:'ast',t:n=>`Reparte ${n}+ asistencias en un partido`,n:()=>r(3,8),f:(n,R)=>R.m&&R.m.ast>=n},
+ {k:'reb',t:n=>`Captura ${n}+ rebotes en un partido`,n:()=>r(5,12),f:(n,R)=>R.m&&R.m.reb>=n},
+ {k:'stl',t:n=>`Roba ${n}+ balones en un partido`,n:()=>r(2,5),f:(n,R)=>R.m&&R.m.stl>=n},
+ {k:'nota',t:n=>`Saca una nota de ${n}+ en un partido`,n:()=>r(7,9),f:(n,R)=>R.nota>=n},
+ {k:'win',t:n=>`Gana ${n} partidos`,n:()=>r(2,4),cnt:1,f:(n,R)=>R.mw},
+ {k:'post',t:n=>`Publica ${n} posts en redes`,n:()=>r(3,6),cnt:1,f:()=>false}];
+function newMission(){const k=pick(MT),n=k.n(),d=divOf(C.myT);return{k:k.k,n,p:0,rw:Math.round((150+n*25)*(3-d)*(1+C.season*.05)),g:k.cnt?0:(Math.random()<.2?1:0)}}
+function fillMs(){while(C.ms.length<3){let m;let t=0;do{m=newMission();t++}while(t<8&&C.ms.some(x=>x.k===m.k));C.ms.push(m)}}
+function msDone(i){const m=C.ms[i];pay(m.rw);if(m.g)gem(m.g,'por una misión');C.mdn=(C.mdn||0)+1;if(C.mdn%3===0)gem(2,'por 3 misiones');log(`🎯 Misión cumplida: +💰${m.rw}${m.g?' +'+m.g+'💎':''}`);toastC(`🎯 ¡Misión cumplida! +💰${m.rw}`);C.ms.splice(i,1);fillMs()}
+function msTick(R){if(!C.ms)return;for(let i=C.ms.length-1;i>=0;i--){const m=C.ms[i],t=MT.find(x=>x.k===m.k);if(!t)continue;if(t.cnt){if(R&&(m.k==='post'?R.post:(!R.post&&t.f(m.n,R))))m.p++;if(m.p>=m.n)msDone(i)}else if(R&&R.played&&t.f(m.n,R))msDone(i)}}
+const SPON=[
+ {id:'s1',n:'Zapas Volt',e:'👟',min:200,inc:150,len:6},
+ {id:'s2',n:'Batido PowerUp',e:'🥤',min:2000,inc:450,len:8},
+ {id:'s3',n:'Móviles Nova',e:'📱',min:10000,inc:1200,len:10},
+ {id:'s4',n:'Banco Imperial',e:'🏦',min:50000,inc:3500,len:12}];
+const spOn=id=>C.sp.find(x=>x.id===id);
+ACT.spon=v=>{const s=SPON.find(x=>x.id===v);if(!s||spOn(v)||C.sp.length>=2)return toastC(C.sp.length>=2?'Máximo 2 patrocinios a la vez':'No disponible');if(sf()+C.fame*60<s.min)return toastC('Aún no te quieren (necesitas más fama/seguidores)');C.sp.push({id:s.id,left:s.len});C.fame+=2;log(`🤝 Firmas con ${s.n}: +💰${s.inc} por jornada.`);persist();draw();toastC('🤝 ¡Patrocinio firmado!')};
+ACT.rais=()=>{if((C.cmr||0)>C.rd&&C.rd>0)return toastC('Tu agente dice que esperes unas jornadas');if(C.sa<1)return toastC('Sin acciones sociales hoy');C.sa--;C.cmr=C.rd+3;const p=clamp(.2+C.trust/220+C.fame/400+(mv()>15000?.1:0)+(C.p.age>=33?-.2:0),.1,.8);
+ if(Math.random()<p&&(C.cm||1)<2.5){C.cm=+((C.cm||1)+.2).toFixed(2);log('💼 Tu agente consigue una subida de sueldo.');toastC(`💼 ¡Subida! Sueldo ×${C.cm}`)}else{C.trust=cl(C.trust-2,0,100);toastC('💼 El club se niega… -2 🤝')}persist();draw()};
+function vBiz(b){const inc=C.sp.reduce((a,x)=>a+(SPON.find(s=>s.id===x.id)||{inc:0}).inc,0);
+ b.innerHTML=`<div class="cd wide gold"><div class="pxt sm">💼 TU AGENTE</div><p style="font-size:12px;margin:6px 0;color:#9fb0e0">Sueldo por partido: <b style="color:#ffd23d">×${C.cm||1}</b> · Valor de mercado 💶 ${fmt(mv())} · Patrocinios: <b>+💰${inc}</b>/jornada</p><button class="cb ${C.sa<1?'no':''}" data-a="rais">📈 PEDIR SUBIDA DE SUELDO<small>1 acc. · depende de míster, fama y valor</small></button></div>
+ <div class="cd"><div class="pxt sm">🤝 PATROCINADORES (${C.sp.length}/2)</div>${SPON.map(s=>{const o=spOn(s.id),ok=sf()+C.fame*60>=s.min;return`<div class="sh"><i>${s.e}</i><div class="sp"><b>${s.n}</b><small>${o?`Activo · quedan ${o.left} jornadas`:`+💰${s.inc}/jornada · ${s.len} jornadas · requiere ${fmt(s.min)} de fama+redes`}</small></div>${o?'<span style="color:#4ade80">✔</span>':`<button class="cb ${ok&&C.sp.length<2?'':'no'}" data-a="spon" data-v="${s.id}">FIRMAR</button>`}</div>`}).join('')}</div>
+ <div class="cd"><div class="pxt sm">🎯 MISIONES</div>${C.ms.map(m=>{const t=MT.find(x=>x.k===m.k);return`<div class="sh"><i>🎯</i><div class="sp"><b>${t.t(m.n)}</b><small>${t.cnt?`Progreso ${m.p}/${m.n} · `:''}Premio 💰${m.rw}${m.g?' + 1💎':''}</small></div></div>`}).join('')}<small style="color:#9fb0e0">Cada 3 misiones: +2 💎</small></div>`}
+
 /* ---- botón del menú ---- */
 const tile=document.createElement('button');tile.className='tile';tile.id='b-career';tile.innerHTML='<span class="ti">🏆</span><b>CARRERA</b><small>Sé una estrella</small>';tile.style.background='linear-gradient(#e8a400,#8a5a00)';
 const tl=$('.mtiles');if(tl)tl.insertBefore(tile,tl.firstChild);tile.onclick=openHub;

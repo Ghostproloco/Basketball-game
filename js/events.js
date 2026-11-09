@@ -41,16 +41,16 @@ function render(){const own=!!save.owned[WID],tk=save.tk||0;
  <div class="evh"><button class="btn small" data-e="back">◀ VOLVER</button><div class="evt">👽 INVASIÓN ALIEN</div><div class="evtk">🎟 <b>${tk}</b></div></div>
  <div class="evbody">
   <div class="evcrew">${A.map(i=>`<div class="eval"><img src="${img(i)}"><b>${CH[i].name.split(' ')[0]}</b><small>${CH[i].title}</small></div>`).join('')}</div>
-  <div class="evcard"><h3>⚔ EL RETO</h3><ul><li>Juega un <b>3 vs 3</b> contra los 3 aliens. Son <b>MUY difíciles</b>: rápidos, con poderes y casi no fallan.</li><li>Si los vences consigues un <b>🎟 TICKET DEL EVENTO</b> (la primera vez).</li><li>El ticket se canjea por <b>Víctor Wamba</b>, el pívot alienígena. ¡Solo se consigue aquí!</li><li>Usa a tus mejores jugadores y sus poderes. Consejo: ¡el equipo importa!</li></ul></div>
+  <div class="evcard"><h3>⚔ EL RETO</h3><ul><li>Juega un <b>3 vs 3</b> contra los 3 aliens. Elige <b>FÁCIL</b> (reclutas flojos, ideal para tu primer ticket) o <b>NORMAL</b> (más rápidos y con poderes).</li><li>Si los vences consigues un <b>🎟 TICKET DEL EVENTO</b> (la primera vez).</li><li>El ticket se canjea por <b>Víctor Wamba</b>, el pívot alienígena. ¡Solo se consigue aquí!</li><li>Usa a tus mejores jugadores y sus poderes. Consejo: ¡el equipo importa!</li></ul></div>
   <div class="evcard evprize"><img src="${img(WID)}"><div><h3>🎁 PREMIO: ${CH[WID].name.toUpperCase()}</h3>Se transforma en <b>ALIEN</b> por unos segundos: más grande, más rápido y mete <b>mates desde muy lejos y hasta de espaldas</b>. Ficha de Pívot con defensa y rebote de otro planeta.${own?'<br><b style="color:#7dff5a">✅ ¡Ya lo tienes!</b>':''}</div></div>
-  <div class="evbtns"><button class="btn main" data-e="play">⚔ ENFRENTAR A LOS ALIENS</button>${own?'':`<button class="btn ${tk?'main':''}" data-e="redeem" ${tk?'':'disabled style="opacity:.45"'}>🎟 CANJEAR TICKET${tk?'':' (0)'}</button>`}</div>
+  <div class="evbtns"><button class="btn main" data-e="play">👽 FÁCIL · Reclutas</button><button class="btn" data-e="play1">⚔ NORMAL · Invasión</button>${own?'':`<button class="btn ${tk?'main':''}" data-e="redeem" ${tk?'':'disabled style="opacity:.45"'}>🎟 CANJEAR TICKET${tk?'':' (0)'}</button>`}</div>
  </div>`}
 window.openEvent=()=>{render();show('#event')};
 sec.addEventListener('click',e=>{const b=e.target.closest('[data-e]');if(!b)return;const k=b.dataset.e;
- if(k==='back')renderMenu();else if(k==='play')play();else if(k==='redeem')redeem()});
-function play(){while(TEAMS.length&&TEAMS[TEAMS.length-1].evt)TEAMS.pop();
+ if(k==='back')renderMenu();else if(k==='play')play(0);else if(k==='play1')play(1);else if(k==='redeem')redeem()});
+function play(lv){lv=lv||0;while(TEAMS.length&&TEAMS[TEAMS.length-1].evt)TEAMS.pop();
  TEAMS.push({name:'ALIENS',col:COL,ids:A.slice(),ovr:96,evt:1});curTeam=TEAMS.length-1;curMode=3;show(null);window.NOPICK=1;try{startMatch3()}finally{window.NOPICK=0}
- if(!G)return;G.ev=1;G.stx=3;G.diff=2;G.t=150;for(const p of G.P)if(p.t===1){p.s=Object.fromEntries(SK.map(k=>[k,Math.min(99,p.s[k]+6)]))}}
+ if(!G)return;G.ev=1;G.stx=3;G.diff=lv?1:0;G.t=150;const NR=lv?-8:-20;for(const p of G.P)if(p.t===1){p.s=Object.fromEntries(SK.map(k=>[k,clamp(p.s[k]+NR,35,99)]))}}
 function redeem(){if(!(save.tk>0)||save.owned[WID])return;save.tk--;save.owned[WID]={lvl:1,st:0};store();
  rw.innerHTML=`<div class="mph"><img class="a" src="${img(WID)}"><img class="b" src="${img(72)}"></div><h2>🛸 ¡${CH[WID].name.toUpperCase()}!</h2><p>${CH[WID].title}. Desbloqueado para tu colección.<br>Poder: <b>FORMA ALIEN</b> · Habilidad: <b>MATE ALIENÍGENA</b></p><button class="btn main" id="evrw-ok">¡INCREÍBLE!</button>`;
  rw.classList.add('on');try{sfx('legend')}catch(e){}$('#evrw-ok').onclick=()=>{rw.classList.remove('on');render()}}
