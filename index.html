@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Gacha Hoops 2D · 1 vs 1</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/menu2.css"></head><body>
+<link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/menu2.css"><link rel="stylesheet" href="css/sobres.css"></head><body>
 <canvas id="gameCanvas"></canvas>
 <div id="hud" class="hidden">
  <div class="hp l"><div class="pt" id="hpL"></div><div><div class="pn" id="nL"></div><div class="ps" id="sL">0</div></div></div>
@@ -47,7 +47,7 @@
    <button id="b-how"><span>❓</span>AYUDA</button>
    <button id="b-mus"><span>🎵</span>MÚSICA</button>
    <button id="b-snd"><span>🔊</span>SONIDO</button>
-   <span class="ver">v19</span>
+   <span class="ver">v20</span>
   </div>
  </section>
 
@@ -83,7 +83,7 @@
   <li>🕹️ <b>Joystick</b>: mueve (también WASD). <b>TURBO</b> (mantén, Shift) gasta energía</li>
   <li>🏀 <b>Con balón</b>: TIRAR (J): pulsa otra vez cerca del punto más alto para un tiro ¡PERFECTO! · MATE (K) cerca del aro · REGATE (L) cruza y puede tumbar al defensa</li>
   <li>🛡️ <b>Defendiendo</b>: ROBAR (J) y TAPÓN (K, salta). Si tu compañero tiene el balón, PEDIR (J) para que te pase</li>
-  <li>👑 <b>Leyendas</b> (botón extra o Y): <b>Kuro</b> STEPBACK (retrocede y tira abierto, con gorro de chef) · <b>Jaimes</b> MEJORA (cuerpo más fuerte, todo +14 unos segundos) · <b>Okonkwo</b> SMASH (mate bestial: manda rivales fuera, rompe el tablero y saca aura). Okonkwo además machaca el rebote de sus propios fallos y es muy difícil de robar</li>
+  <li>👑 <b>Leyendas</b> (botón extra o Y): <b>Kuro</b> STEPBACK (retrocede y tira abierto, con gorro de chef) · <b>Reyes</b> MEJORA (cuerpo más fuerte, todo +14 unos segundos) · <b>Okonkwo</b> SMASH (mate bestial: manda rivales fuera, rompe el tablero y saca aura). Okonkwo además machaca el rebote de sus propios fallos y es muy difícil de robar</li>
   <li>⚡ <b>Sael</b>: TORMENTA electriza a todos los rivales (quedan paralizados), hace un dribble de rayos y tira un fadeaway con balón de rayos que no se tapona. Milan tiene gancho, pase sin mirar y sombrero · Long gancho · Brandon dunks de molino · Darío y Benito con robos/tapones especiales</li>
   <li>🌟 <b>9 leyendas</b>: Long (TORRE: gigante que tapona todo), Brandon (VUELO: salto-póster desde lejos), Sael (TORMENTA: fantasma imparable), Milan (SOMBRERO: tiro flotado que no se tapona), Darío (REBOTE: imán de rebotes y robo), Benito (CANDADO: frena al rival, le baja el tiro y le roba)</li>
   <li>⏱ Los poderes tardan en cargarse al empezar el partido y tienen cuenta atrás en el botón</li>
@@ -148,11 +148,12 @@
 <section id="teams" class="screen hidden"><div class="lhead"><button class="btn small" id="tm-back">◀ ALINEACIÓN</button><h2>🏆 ELIGE EL RIVAL</h2></div><div id="tmgrid"></div></section>
 <section id="end" class="screen hidden"><h2 id="eT"></h2><div id="eS"></div><div id="eC"></div><div id="eStats"></div>
  <button class="btn main" id="b-again">🔁 REVANCHA</button><button class="btn" id="b-menu">MENÚ</button></section>
-<script src="js/crest.js"></script><script src="js/data.js"></script><script src="js/roster.js"></script><script src="js/legends.js"></script><script src="js/hats.js"></script>
-<script src="js/game.js"></script><script src="js/legends2.js"></script><script src="js/music.js"></script><script src="js/firebase-config.js"></script>
+<script src="js/crest.js"></script><script src="js/data.js"></script><script src="js/roster.js"></script><script src="js/legends.js"></script><script src="js/classics.js"></script><script src="js/hats.js"></script>
+<script src="js/game.js"></script><script src="js/legends2.js"></script><script src="js/fx.js"></script>
+<script src="js/music.js"></script><script src="js/firebase-config.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/social.js"></script><script src="js/ui.js"></script><script src="js/events.js"></script><script src="js/tutorial.js"></script><script src="js/career.js"></script>
-<script src="js/admin.js"></script><style>*{touch-action:manipulation!important}html,body,canvas,#controls,#controls *{touch-action:none!important}</style>
+<script src="js/sobres.js"></script><script src="js/admin.js"></script><style>*{touch-action:manipulation!important}html,body,canvas,#controls,#controls *{touch-action:none!important}</style>
 <script>
 /* sin zoom por doble toque / pellizco en iPhone */
 let _lt=0;document.addEventListener('touchend',e=>{const n=Date.now(),t=e.target;if(n-_lt<350&&t&&t.closest&&(t.closest('#controls')||t.id==='gameCanvas'))e.preventDefault();_lt=n},{passive:false});
