@@ -41,7 +41,7 @@ function render(){const own=!!save.owned[WID],tk=save.tk||0;
  <div class="evh"><button class="btn small" data-e="back">◀ VOLVER</button><div class="evt">👽 INVASIÓN ALIEN</div><div class="evtk">🎟 <b>${tk}</b></div></div>
  <div class="evbody">
   <div class="evcrew">${A.map(i=>`<div class="eval"><img src="${img(i)}"><b>${CH[i].name.split(' ')[0]}</b><small>${CH[i].title}</small></div>`).join('')}</div>
-  <div class="evcard"><h3>⚔ EL RETO</h3><ul><li>Juega un <b>3 vs 3</b> contra los 3 aliens. Elige <b>FÁCIL</b> (reclutas flojos, ideal para tu primer ticket) o <b>NORMAL</b> (más rápidos y con poderes).</li><li>Si los vences consigues un <b>🎟 TICKET DEL EVENTO</b> (la primera vez).</li><li>El ticket se canjea por <b>Víctor Wamba</b>, el pívot alienígena. ¡Solo se consigue aquí!</li><li>Usa a tus mejores jugadores y sus poderes. Consejo: ¡el equipo importa!</li></ul></div>
+  <div class="evcard"><h3>⚔ EL RETO</h3><ul><li>Juega un <b>3 vs 3</b> contra los 3 aliens. Elige <b>FÁCIL</b> (reclutas flojos, ideal para tu primer ticket) o <b>NORMAL</b> (más rápidos y con poderes).</li><li>Si los vences consigues un <b>🎟 TICKET DEL EVENTO</b> (la primera vez).</li><li>El ticket se canjea por <b>Zenón Altaír</b>, el pívot alienígena. ¡Solo se consigue aquí!</li><li>Usa a tus mejores jugadores y sus poderes. Consejo: ¡el equipo importa!</li></ul></div>
   <div class="evcard evprize"><img src="${img(WID)}"><div><h3>🎁 PREMIO: ${CH[WID].name.toUpperCase()}</h3>Se transforma en <b>ALIEN</b> por unos segundos: más grande, más rápido y mete <b>mates desde muy lejos y hasta de espaldas</b>. Ficha de Pívot con defensa y rebote de otro planeta.${own?'<br><b style="color:#7dff5a">✅ ¡Ya lo tienes!</b>':''}</div></div>
   <div class="evbtns"><button class="btn main" data-e="play">👽 FÁCIL · Reclutas</button><button class="btn" data-e="play1">⚔ NORMAL · Invasión</button>${own?'':`<button class="btn ${tk?'main':''}" data-e="redeem" ${tk?'':'disabled style="opacity:.45"'}>🎟 CANJEAR TICKET${tk?'':' (0)'}</button>`}</div>
  </div>`}
@@ -57,7 +57,7 @@ function redeem(){if(!(save.tk>0)||save.owned[WID])return;save.tk--;save.owned[W
 /* resultado del evento */
 const _em=endMatch;endMatch=function(){const g=G,ev=g&&g.ev,w=g&&g.s[0]>g.s[1];const r=_em.apply(this,arguments);
  if(ev){while(TEAMS.length&&TEAMS[TEAMS.length-1].evt)TEAMS.pop();curTeam=0;let m;
-  if(w){if(!save.evWon){save.evWon=1;save.tk=(save.tk||0)+1;m='🎟 ¡HAS GANADO UN TICKET DEL EVENTO!<br>Canjéalo en el evento por Víctor Wamba'}else{save.coins+=500;m='👽 ¡Otra vez a los aliens! +500 🪙'}}else m='👽 Los aliens te han vencido... ¡inténtalo otra vez!';
+  if(w){if(!save.evWon){save.evWon=1;save.tk=(save.tk||0)+1;m='🎟 ¡HAS GANADO UN TICKET DEL EVENTO!<br>Canjéalo en el evento por Zenón Altaír'}else{save.coins+=500;m='👽 ¡Otra vez a los aliens! +500 🪙'}}else m='👽 Los aliens te han vencido... ¡inténtalo otra vez!';
   save.evPlays=(save.evPlays||0)+1;store();setTimeout(()=>{const e=$('#eC');if(e)e.innerHTML+='<br><b style="color:#7dff5a">'+m+'</b>'},1100)}
  return r};
 const _rm=renderMenu;renderMenu=function(){while(TEAMS.length&&TEAMS[TEAMS.length-1].evt)TEAMS.pop();_rm.apply(this,arguments);try{const t=$('#evtk');if(t)t.textContent=save.tk||0}catch(e){}};

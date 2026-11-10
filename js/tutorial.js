@@ -1,4 +1,4 @@
-// ===== TUTORIAL GUIADO por Karusso: solo puedes tocar lo que él te indica =====
+// ===== TUTORIAL GUIADO por Rocco: solo puedes tocar lo que él te indica =====
 (()=>{
 const KID=65;
 const css=document.createElement('style');css.textContent=`
@@ -28,7 +28,7 @@ const css=document.createElement('style');css.textContent=`
 #tutp h2{font:12px 'Press Start 2P',monospace;color:#ffd23d;margin:6px 0}#tutp p{font-size:14px;line-height:1.5;margin-bottom:12px}
 #tutp .row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}#tutp button{padding:12px 16px;border-radius:14px;border:2px solid #fff;font:9px 'Press Start 2P',monospace;color:#fff;background:linear-gradient(#3be08a,#0b6a3c)}#tutp button.s{background:linear-gradient(#556,#334);border-color:#99a}`;
 document.head.appendChild(css);
-const el=document.createElement('div');el.id='tut';el.innerHTML='<div class="tring none"></div><div class="tbub"><img id="tutk"><div class="tx"><div class="tn">ENTRENADOR KARUSSO</div><div class="tt"></div><div class="tb"><button class="nx">SIGUIENTE ▶</button><span class="hint"></span><div class="dots"></div></div></div></div>';document.body.appendChild(el);
+const el=document.createElement('div');el.id='tut';el.innerHTML='<div class="tring none"></div><div class="tbub"><img id="tutk"><div class="tx"><div class="tn">ENTRENADOR ROCCO</div><div class="tt"></div><div class="tb"><button class="nx">SIGUIENTE ▶</button><span class="hint"></span><div class="dots"></div></div></div></div>';document.body.appendChild(el);
 const sk=document.createElement('button');sk.id='tskip';sk.textContent='SALTAR ▶▶';document.body.appendChild(sk);
 const pr=document.createElement('div');pr.id='tutp';document.body.appendChild(pr);
 const ring=el.querySelector('.tring'),bub=el.querySelector('.tbub'),tt=el.querySelector('.tt'),nx=el.querySelector('.nx'),hint=el.querySelector('.hint'),dots=el.querySelector('.dots');
@@ -38,7 +38,7 @@ const tp=(p,x,y)=>{p.x=x;p.y=y;p.vx=p.vy=0};
 const give=p=>{const B=G.B;B.h=p;B.fl=null;B.dk=null;B.ps=null;B.net=false;B.rim=null;p.st='idle';p.cd=0;p.tt=0};
 const seen={};
 const STEPS=[
- {t:'¡Hola! Soy <b>Karusso</b>, tu entrenador. En un minuto te enseño lo básico. ¡Solo podrás tocar lo que yo te diga!',btn:1},
+ {t:'¡Hola! Soy <b>Rocco</b>, tu entrenador. En un minuto te enseño lo básico. ¡Solo podrás tocar lo que yo te diga!',btn:1},
  {t:'Primero, <b>muévete</b>. Arrastra el <b>joystick</b> (círculo de abajo a la izquierda) para correr por la cancha.',hl:'#joystick-base',allow:['#joystick-base'],init:()=>{S.d=0;S.lx=me().x;S.ly=me().y;give(me())},ok:()=>{const p=me();S.d+=Math.hypot(p.x-S.lx,p.y-S.ly);S.lx=p.x;S.ly=p.y;return S.d>420}},
  {t:'Bien. Ahora <b>TURBO</b>: mantenlo pulsado mientras mueves el joystick para correr más rápido. Gasta energía, ¡no abuses!',hl:'#btn-t',allow:['#btn-t','#joystick-base'],init:()=>{S.hold=0},ok:()=>{if(TURBO)S.hold+=120;return S.hold>=700}},
  {t:'Con el balón, pulsa <b>REGATE</b> para driblar. Cruzas a un lado y a otro; contra un rival cerca puedes hacerle caer.',hl:'#btn-c',allow:['#btn-c','#joystick-base','#btn-t'],init:()=>{give(me());seen.c=0},ok:()=>{if(me().st==='cross')seen.c=1;return seen.c&&me().st!=='cross'}},
@@ -75,7 +75,7 @@ function begin(){window.__tut=1;S={i:0};pr.classList.remove('on');show(null);
  el.classList.add('on');sk.classList.add('on');$('#tutk').src=figImg(KID,CH[KID].jc);
  const w=setInterval(()=>{if(!S){clearInterval(w);return}if(G&&G.mode==='play'){clearInterval(w);G.P[1].tutDummy=1;go(0)}},150)}
 window.startTutorial=begin;
-function offer(){save.karNew=0;pr.innerHTML=`<div class="bx"><img src="${figImg(KID,CH[KID].jc)}"><h2>¡BIENVENIDO!</h2><p>Soy <b>Karusso</b>. ¿Quieres un tutorial rápido (1 minuto) para aprender a mover, tirar, regatear, machacar y usar poderes? Ganas 💰300. <b>¡Y te regalo mi ficha (Calvo Karusso, ÉPICO 75)!</b></p><div class="row"><button id="tp-go">EMPEZAR TUTORIAL</button><button class="s" id="tp-no">SALTAR</button></div></div>`;pr.classList.add('on');
+function offer(){save.karNew=0;pr.innerHTML=`<div class="bx"><img src="${figImg(KID,CH[KID].jc)}"><h2>¡BIENVENIDO!</h2><p>Soy <b>Rocco</b>. ¿Quieres un tutorial rápido (1 minuto) para aprender a mover, tirar, regatear, machacar y usar poderes? Ganas 💰300. <b>¡Y te regalo mi ficha (Calvo Rocco, ÉPICO 75)!</b></p><div class="row"><button id="tp-go">EMPEZAR TUTORIAL</button><button class="s" id="tp-no">SALTAR</button></div></div>`;pr.classList.add('on');
  $('#tp-go').onclick=begin;$('#tp-no').onclick=()=>{pr.classList.remove('on');save.tutDone=1;store()}}
 const _rm=renderMenu;renderMenu=function(){_rm.apply(this,arguments);try{if(save.tutDone&&save.karNew&&!pr.classList.contains('on')&&!window.__tut){setTimeout(()=>{if(!save.karNew)return;pr.innerHTML=`<div class="bx"><img src="${figImg(KID,CH[KID].jc)}"><h2>🎁 ¡REGALO PARA TODOS!</h2><p><b>${CH[KID].name}</b> (ÉPICO · 75 de media) ya está en tu colección. Roba balones como nadie.</p><div class="row"><button id="tp-ok">¡GENIAL!</button></div></div>`;pr.classList.add('on');$('#tp-ok').onclick=()=>{pr.classList.remove('on');save.karNew=0;store()}},600)}if(!save.tutDone&&!window.__tut&&!pr.classList.contains('on')){const n=$('#news');if(n)n.classList.add('hidden');save.newsSeen=NEWS[0].v;setTimeout(()=>{if(!save.tutDone&&!window.__tut&&!document.querySelector('#auth:not(.hidden)'))offer()},700)}}catch(e){}};
 })();

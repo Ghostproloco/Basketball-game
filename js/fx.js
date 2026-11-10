@@ -31,7 +31,7 @@ const F={
   F.add(44,(g,e,k)=>{g.globalCompositeOperation='lighter';g.strokeStyle=c;g.shadowColor=c;g.shadowBlur=10;g.globalAlpha=1-k;for(const s of a){const t=e.t,px=x+s[0]*t,py=y+s[1]*t+.28*t*t;g.lineWidth=s[2]*(1-k);g.beginPath();g.moveTo(px,py);g.lineTo(px-s[0]*2.4,py-(s[1]+.56*t)*2.4);g.stroke()}})},
  /* estela cometa */
  streak(x1,y1,x2,y2,c,T){F.add(T||26,(g,e,k)=>{const x=x1+(x2-x1)*k,y=y1+(y2-y1)*k;g.globalCompositeOperation='lighter';const gr=g.createLinearGradient(x,y,x-(x2-x1)*.35,y-(y2-y1)*.35);gr.addColorStop(0,c);gr.addColorStop(1,c+'00');g.strokeStyle=gr;g.lineWidth=18*(1-k*.4);g.lineCap='round';g.beginPath();g.moveTo(x,y);g.lineTo(x-(x2-x1)*.35,y-(y2-y1)*.35);g.stroke();g.fillStyle='#fff';g.beginPath();g.arc(x,y,8,0,7);g.fill()})},
- /* Wamba: abducción con platillo y rayo tractor + transformación */
+ /* Altaír: abducción con platillo y rayo tractor + transformación */
  alien(p){const c='#7dff5a';F.cine(1900,c);
   F.add(75,(g,e,k)=>{const t=e.t,x=p.x,y=p.y,ty=y-440;
    const ux=x-250*(p.dir||1)+Math.sin(t*.1)*16,uy=t<16?y-1200+(ty-(y-1200))*F.ease(t/16):t<46?ty+Math.sin(t*.25)*9:ty+(y-1900-ty)*F.ease((t-46)/22);
