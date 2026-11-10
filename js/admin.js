@@ -7,6 +7,7 @@ function apply(){if(!isAdmin()||typeof save==='undefined'||!save)return false;
  if(!save.owned)save.owned={};
  for(const id of ids){if(!CH[id])continue;const o=save.owned[id];if(!o){save.owned[id]={lvl:1,st:5,v2:1};ch=1}else if(o.st<5||!o.v2){o.st=5;o.v2=1;o.lvl=o.lvl||1;ch=1}}
  if((save.coins||0)<999999){save.coins=999999;ch=1}if((save.gems||0)<9999){save.gems=9999;ch=1}
+ if(window.OUTF){if(!save.oo)save.oo={};OUTF.forEach((o,i)=>{if(!save.oo[i]){save.oo[i]=1;ch=1}})}
  if(!save.admin){save.admin=1;ch=1}
  return ch}
 window.__adm=apply;

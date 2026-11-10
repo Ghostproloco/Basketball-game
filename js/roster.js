@@ -39,12 +39,12 @@ function baseOf(c){if(c.b8)return c.b8;const b=c.base,id=c.id,cl=x=>clamp(Math.r
 function statsOf(id,lvl=1,st=0,mul=1){const c=CH[id],b=baseOf(c),o={};for(const k of SK)o[k]=clamp(Math.round(b[k]*(1+STB*st)*mul),1,STCAP);return o}
 const ovrOf=s=>Math.round(SK.reduce((a,k)=>a+s[k],0)/SK.length*DS);
 CH.push({id:56,name:'Coloso Okonkwo',title:'El Coloso Imparable',rar:3,arch:'def',pos:'C',h:1.22,wd:1.34,pw:'TITÁN',base:{vel:70,tir:80,mat:99,reg:76,def:99},jc:'#8e44ad'},
- {id:57,name:'Leandro Jaimes',title:'El Rey Corona',rar:3,arch:'all',pos:'SF',h:1.08,wd:1.08,pw:'CORONA',base:{vel:92,tir:88,mat:97,reg:88,def:92},jc:'#f4c20d'},
+ {id:57,name:'Leónidas Reyes',title:'El Rey Corona',rar:3,arch:'all',pos:'SF',h:1.08,wd:1.08,pw:'CORONA',base:{vel:92,tir:88,mat:97,reg:88,def:92},jc:'#f4c20d'},
  {id:58,name:'Esteban Kuro',title:'Chef Triple',rar:3,arch:'tir',pos:'PG',h:.95,pw:'REY 3PT',base:{vel:94,tir:99,mat:62,reg:98,def:72},jc:'#2f6fe4'},
 {id:59,name:'Long Chen',title:'Muralla de Jade',rar:3,arch:'def',pos:'C',h:1.3,wd:1.0,pw:'MURALLA',base:{vel:62,tir:78,mat:99,reg:60,def:99},jc:'#d0202e'},
 {id:60,name:'Brandon Volcán',title:'El Póster Volador',rar:3,arch:'vol',pos:'PF',h:1.1,wd:1.08,pw:'PÓSTER',base:{vel:86,tir:62,mat:99,reg:78,def:84},jc:'#1d6fe0'},
 {id:61,name:'Sael Volt',title:'El Relámpago',rar:3,arch:'reg',pos:'SG',h:1.04,wd:1.0,pw:'FANTASMA',base:{vel:97,tir:92,mat:82,reg:96,def:80},jc:'#2bb5e8'},
-{id:62,name:'Milan Jokar',title:'El Mago del Pase',rar:3,arch:'all',pos:'C',h:1.14,wd:1.12,pw:'JOKER',base:{vel:66,tir:93,mat:94,reg:97,def:80},jc:'#e6b422'},
+{id:62,name:'Mirko Jarrón',title:'El Mago del Pase',rar:3,arch:'all',pos:'C',h:1.14,wd:1.12,pw:'JOKER',base:{vel:66,tir:93,mat:94,reg:97,def:80},jc:'#e6b422'},
 {id:63,name:'Darío Locura',title:'El Rebotador Loco',rar:3,arch:'def',pos:'PF',h:1.06,wd:1.0,pw:'REBOTE',base:{vel:86,tir:50,mat:88,reg:70,def:99},jc:'#d4146a'},
 {id:64,name:'Benito Acero',title:'Muro de Acero',rar:3,arch:'def',pos:'C',h:1.04,wd:1.16,pw:'CANDADO',base:{vel:70,tir:45,mat:90,reg:55,def:99},jc:'#1f3fa8'});
 Object.assign(CH[56].base,{vel:68,tir:62,mat:99,reg:70,def:97,reb:99,pas:60,agu:88});
