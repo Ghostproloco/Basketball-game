@@ -6,6 +6,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/menu2.css"><link rel="stylesheet" href="css/sobres.css"></head><body>
 <canvas id="gameCanvas"></canvas>
+<div id="barrio" class="screen hidden"><canvas id="bcv"></canvas><button id="bback" class="btn small">← MENÚ</button><div id="bcn">🪙 <b id="bcoin">0</b></div><div id="bnm" class="hidden"></div><button id="bgo" class="btn main hidden">ENTRAR ▶</button><div id="bjoy"><i></i></div><div id="bzone"></div><div id="bbuf"></div><button id="bonl" class="btn small">🌐</button><button id="bveh" class="btn small hidden">🛹 MONTAR</button><button id="bemo" class="btn small">😎</button><div id="bemr"></div><div id="bq"><div class="bqb"><div class="bqh"><b>📋 MISIONES DEL DÍA</b><button id="bq-x" class="btn small">✕</button></div><div id="bq-b"></div><small>Se renuevan cada día</small></div></div></div>
+
 <div id="hud" class="hidden">
  <div class="hp l"><div class="pt" id="hpL"></div><div><div class="pn" id="nL"></div><div class="ps" id="sL">0</div></div></div>
  <div id="clock">2:00</div><div id="sclk">16</div>
@@ -35,6 +37,7 @@
     <button class="tile pack" id="b-gacha"><span class="ti">📦</span><b>SOBRES</b><small>Consigue jugadores</small></button>
     <button class="tile team" id="b-team"><span class="ti">⭐</span><b>EQUIPO</b><small>Elige y mejora</small></button>
     <button class="tile evt" id="b-event"><span class="ti">👽</span><b>EVENTO ALIEN</b><small>Gana un 🎟 ticket</small><span class="bdg">NUEVO</span></button>
+    <button class="tile barrio" id="b-barrio"><span class="ti">🏙</span><b>BARRIO</b><small>Pasea y entra a todo</small><span class="bdg">NUEVO</span></button>
     <button class="tile clan" id="b-clan"><span class="ti">🛡</span><b>CLANES</b><small>Únete y busca</small></button>
    </div>
   </div>
@@ -42,6 +45,7 @@
    <button id="b-news"><span>📰</span>NOVEDADES<i id="newsdot"></i></button>
    <button id="b-prof"><span>📊</span>PERFIL</button>
    <button id="b-find"><span>🔎</span>BUSCAR</button>
+   <button id="b-code"><span>🎟</span>CÓDIGO</button>
    <button id="b-acc"><span>👤</span>CUENTA</button>
    <button id="b-set"><span>⚙</span>AJUSTES</button>
    <button id="b-how"><span>❓</span>AYUDA</button>
@@ -149,11 +153,12 @@
 <section id="end" class="screen hidden"><h2 id="eT"></h2><div id="eS"></div><div id="eC"></div><div id="eStats"></div>
  <button class="btn main" id="b-again">🔁 REVANCHA</button><button class="btn" id="b-menu">MENÚ</button></section>
 <script src="js/crest.js"></script><script src="js/data.js"></script><script src="js/roster.js"></script><script src="js/legends.js"></script><script src="js/classics.js"></script><script src="js/hats.js"></script>
-<script src="js/game.js"></script><script src="js/legends2.js"></script><script src="js/fx.js"></script>
+<script src="js/game.js"></script><script src="js/legends2.js"></script><script src="js/legends3.js"></script><script src="js/fx.js"></script>
 <script src="js/music.js"></script><script src="js/firebase-config.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/social.js"></script><script src="js/ui.js"></script><script src="js/events.js"></script><script src="js/tutorial.js"></script><script src="js/career.js"></script>
-<script src="js/sobres.js"></script><script src="js/rim.js"></script><script src="js/admin.js"></script><style>*{touch-action:manipulation!important}html,body,canvas,#controls,#controls *{touch-action:none!important}</style>
+<script src="js/sobres.js"></script><script src="js/wardrobe.js"></script><script src="js/online.js"></script>
+<script src="js/duel.js"></script><script src="js/barrio.js"></script><script src="js/rim.js"></script><style>*{touch-action:manipulation!important}html,body,canvas,#controls,#controls *{touch-action:none!important}</style>
 <script>
 /* sin zoom por doble toque / pellizco en iPhone */
 let _lt=0;document.addEventListener('touchend',e=>{const n=Date.now(),t=e.target;if(n-_lt<350&&t&&t.closest&&(t.closest('#controls')||t.id==='gameCanvas'))e.preventDefault();_lt=n},{passive:false});

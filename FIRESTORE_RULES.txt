@@ -1,0 +1,40 @@
+// Reglas de Firestore con anti-trampas de monedas/gemas. Pégalas en Firebase -> Firestore -> Reglas -> Publicar.
+// El juego guarda 'coins' y 'gems' como campos aparte (además del JSON de la partida) y al cargar usa esos campos
+// como tope. Estas reglas impiden que suban de golpe: máx. +20.000 monedas / +200 gemas por guardado, más un extra
+// por cada minuto desde el último guardado (+1.000 monedas, +10 gemas por minuto).
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{uid} {
+      allow read, delete: if request.auth != null && request.auth.uid == uid;
+      allow create: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.coins <= 5000 && request.resource.data.gems <= 300;
+      allow update: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.coins <= resource.data.coins + 20000 + (('updated' in resource.data) ? 1000 * ((request.time.toMillis() - resource.data.updated.toMillis()) / 60000) : 0)
+        && request.resource.data.gems <= resource.data.gems + 200 + (('updated' in resource.data) ? 10 * ((request.time.toMillis() - resource.data.updated.toMillis()) / 60000) : 0);
+    }
+    match /profiles/{uid} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == uid;
+    }
+    match /usernames/{name} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow delete: if request.auth != null && resource.data.uid == request.auth.uid;
+    }
+    match /clans/{id} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.resource.data.leader == request.auth.uid;
+      allow update, delete: if request.auth != null;
+      match /members/{uid} {
+        allow read: if request.auth != null;
+        allow write: if request.auth != null;
+      }
+    }
+  }
+}
+// LÍMITES HONESTOS: ningún juego que corre en el navegador es 100% a prueba de trampas. Esto frena la edición casual y
+// los saltos grandes de dinero, pero no impide ganar monedas jugando muy rápido con un script. Para eso haría falta un
+// servidor que ejecute la lógica del partido (Cloud Functions, plan de pago).
+// Si tu cuenta de pruebas tiene monedas de más (de cuando existía el modo admin) puedes seguir jugando: las reglas solo
+// limitan SUBIR, no bajar.
