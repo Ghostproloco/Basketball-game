@@ -19,5 +19,5 @@ Sin Firebase (modo demo/local) funciona entre pestañas del mismo navegador.
 - Si estáis juntos en el barrio, acércate y pulsa RETAR: el otro acepta y juega un 1 vs 1 en directo (el que reta hace de anfitrión).
 
 ## Códigos de canje (menú > 🎟 CÓDIGO)
-- `CALVOORO` → Calvo Rocco ★ Dorado (85)
-- `MAMBA24` → Kobra Brayan (105, con Forma Mamba, HOOK y DIVE)
+- `CALVOORO` → Teodoro Pelón ★ Dorado (85)
+- `MAMBA24` → Dante Vipérez (105, con Forma Mamba, HOOK y DIVE)
