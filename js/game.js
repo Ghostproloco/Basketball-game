@@ -24,7 +24,7 @@ function drawLegs(g,hx,hy,cy,gt,sk){const A=[28,40,44][gt],H=[8,14,18][gt],L=-hy
   g.fillStyle='#f2f2f2';g.fillRect(-8,4,26,2.5);g.restore()}}
 const CYL=[WALKALL,RA,SPR].map(q=>{let bi=0,by=-1e9;q.forEach((n,i)=>{const b=FR[n].ball;if(b&&b[1]>by){by=b[1];bi=i}});return(bi+.5)/q.length});
 const isShaq=p=>CH[p.id].pw==='TITÁN',isLeb=p=>CH[p.id].pw==='CORONA',isCur=p=>CH[p.id].pw==='REY 3PT',boostOn=p=>(p.bst||0)>performance.now(),
-stealRes=h=>(isShaq(h)?.3:1)*(boostOn(h)?.3:1)*(ghostOn(h)?.1:1)*((h.nst||0)>performance.now()?.25:1),
+stealRes=h=>(CH[h.id].pw==='MAMBA'?((h.mmb||0)>performance.now()?0:.45):1)*(isShaq(h)?.3:1)*(boostOn(h)?.3:1)*(ghostOn(h)?.1:1)*((h.nst||0)>performance.now()?.25:1),
 SKLBL={'REY 3PT':'🔙<br>STEPBACK','CORONA':'👑<br>MEJORA','TITÁN':'💥<br>SMASH','MURALLA':'🗼<br>TORRE','PÓSTER':'🚗<br>VUELO','FANTASMA':'⚡<br>TORMENTA','JOKER':'🤠<br>SOMBRERO','REBOTE':'🌈<br>REBOTE','CANDADO':'🔒<br>CANDADO'};
 const PWN={FANTASMA:'RAYO'};
 const isYao=p=>CH[p.id].pw==='MURALLA',isBlake=p=>CH[p.id].pw==='PÓSTER',isSga=p=>CH[p.id].pw==='FANTASMA',isJok=p=>CH[p.id].pw==='JOKER',isRod=p=>CH[p.id].pw==='REBOTE',isWal=p=>CH[p.id].pw==='CANDADO',
@@ -591,7 +591,7 @@ function stepP(p){p.an++;if(p.cd>0)p.cd--;const B=G.B,o=opp(p),play=G.mode==='pl
   else if(p.st==='steal'){if(t<10){p.vx=p.f*5;p.x+=p.vx;clampP(p)}else{p.vx*=.7}
    if(t===7){const h=B.h;if(h&&h.t!==p.t&&Math.abs(h.x-p.x)<165&&Math.abs(h.y-p.y)<95&&h.st!=='shoot'&&h.st!=='dunk'){
      if(h.st==='cross'&&h.tt<20){if(rageOn(h)||rnd()<clamp(.55+(h.s.reg-p.s.def)/200,.25,.9)){p.st='fall';p.tt=0;p.vx=-p.f*6;pop(h.x,h.y-270,'¡TOBILLOS!','#ffb347',44);taunt(h,'ankle');sfx('fall')}}
-     else if(rnd()<clamp(.24+(p.s.def-h.s.reg)/200+(p.ai?SKL[G.diff].sb:0),.07,.75)*stealRes(h))stolen(p,h)}}
+     else if(rnd()<clamp(.22+(p.s.def-h.s.reg)/200+(p.ai?SKL[G.diff].sb:0)+((p.lad||0)>performance.now()?(CH[p.id].pw==='GUARDIÁN'?.2:.12):0),.07,.7)*stealRes(h))stolen(p,h)}}
    if(t>=22&&p.st==='steal')p.st='idle'}
   else if(p.st==='shove'){if(t===6){const h=B.h;if(h&&h.t!==p.t&&Math.abs(h.x-p.x)<150&&Math.abs(h.y-p.y)<95&&h.st==='idle'&&rnd()<.55+(p.s.def-h.s.reg)/300){h.slow=80;h.vx+=p.f*9;pop(h.x,h.y-260,'¡EMPUJÓN!','#ffb347',40);sfx('block')}}if(t>=16)p.st='idle'}
   else if(p.st==='block'){p.vx*=.8;p.z=t<38?120*Math.sin(Math.PI*t/38):0;if(t>=40){p.st='idle';p.z=0}}

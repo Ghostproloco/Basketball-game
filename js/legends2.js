@@ -26,7 +26,7 @@ draw(g,p,sc,fn){if(!mine(p)){fn();return}
  if(p.st==='dunk'){const u=p.tt-p.dk0;if(p.dkind===7&&u>=4&&u<30){sx*=-1;rot=-d*.3;tr=1}
   if(p.es&&u>=-14&&u<18){tx=d*Math.sin((u+14)/32*6.2832)*26;rot=Math.sin((u+14)/32*6.2832)*.14;tr=1}}
  if(p.sbk&&p.st==='cross'){tr=1;rot=-p.dir*.12}
- const trail=p.st==='cross'&&(w==='REGATE'||p.xv)||p.st==='dunk'&&(p.es||p.alien||w==='ATÓMICO'&&R(p))||(w==='ATÓMICO'&&R(p)&&p.mv)||(w==='LADRÓN'&&(p.lad||0)>performance.now());
+ const trail=p.st==='cross'&&(w==='REGATE'||p.xv)||p.st==='dunk'&&(p.es||p.alien||w==='ATÓMICO'&&R(p))||(w==='ATÓMICO'&&R(p)&&p.mv)||(w==='LADRÓN'&&(p.lad||0)>performance.now())||(w==='MAESTRO'&&p.st==='cross'&&p.sbk&&R(p));
  if(trail){const c=RCOL[w];for(let i=2;i>=1;i--){g.save();g.globalAlpha=a0*.26/i;g.translate(p.x-d*i*20,cy);g.scale(sx,sy);g.rotate(rot);g.translate(-p.x,-cy);g.globalCompositeOperation='lighter';fn();g.restore();void c}}
  if(!tr){fn();return}
  g.save();g.translate(p.x+tx,cy);g.rotate(rot);g.scale(sx,sy);g.translate(-p.x,-cy);fn();g.restore()},
@@ -62,7 +62,7 @@ dunk(p){const w=W(p);if(!mine(p))return;
 fade(p){const w=W(p);return mine(p)&&(w==='MAESTRO'&&(R(p)||p.sb2)||w==='SHOWTIME'&&p.logo)},
 shot(p,pr,three,d,cont){if(!mine(p))return pr;const w=W(p);
  if(w==='EUROSTEP'){if(three||d>620)pr*=.42;else pr-=.03}
- else if(w==='MAESTRO'){pr+=.05+(R(p)?.2:0)+(p.sb2?.1:0)}
+ else if(w==='MAESTRO'){pr+=.1+(R(p)?.26:0)+(p.sb2?.16:0)+(three?.05:0)}
  else if(w==='SHOWTIME'){if(three||d>600)pr+=.12;if(R(p))pr+=.14;if(p.logo){pr+=.25;p.logo=0}}
  else if(w==='ALIEN'){pr+=p.alien?.12:.03}else if(w==='CEREBRO'){pr+=R(p)?.1:.02}
  else if(w==='ATÓMICO'||w==='REGATE'){pr+=R(p)?.08:0}
@@ -70,6 +70,7 @@ shot(p,pr,three,d,cont){if(!mine(p))return pr;const w=W(p);
 pass(p,t){if(!mine(p))return;const w=W(p),B=G.B;if(w==='CEREBRO'||(R(p)&&(w==='MAESTRO'||w==='SHOWTIME'))){if(B.ps)B.ps.T=Math.max(6,B.ps.T-3);if(t&&(R(p)||w==='CEREBRO')){t.sh=performance.now()+(R(p)?2200:1400);if(p===G.hu||rnd()<.4)pop(p.x,p.y-270,R(p)?'¡PASE MÁGICO!':'¡VISIÓN!',RCOL[w],30)}}},
 /* ---------- IA de los nuevos ---------- */
 ai(p){if(p.st!=='idle')return;const now=performance.now(),B=G.B,has=B.h===p,o=opp(p),near=dist(p,o),k=(G.diff+1),w=W(p);
+ if(w==='LADRÓN'&&(p.lad||0)>now&&B.h&&B.h.t!==p.t&&dist(p,B.h)<250&&rnd()<.05*k){doSteal(p);return}
  if(now>=(p.pwT||0)&&rnd()<.0045*k){if(w==='LADRÓN'&&!(B.h&&B.h.t!==p.t&&dist(p,B.h)<380))return;usePower(p);return}
  if(now>=(p.skT||0)&&L.sk[w]){const pr=.011*k;if(has&&rnd()<pr)useSkill(p);else if(w==='REGATE'&&has&&near<340&&rnd()<pr*2)useSkill(p)}}
 };
@@ -85,9 +86,12 @@ L.sk.ATÓMICO=(p,now,B,has)=>{if(need(p,has))return;p.shk=1;if(farDunk(p,6,'¡EX
 L.sk.REGATE=(p,now,B,has)=>{if(need(p,has))return;p.skT=now+9000;p.combo=3;p.cmbD=1;T(p,'¡COMBO DE REGATES!');fxRing(p.x,p.y,'#46e8ff',210,22);sfx('swish')};
 L.sk.EUROSTEP=(p,now,B,has)=>{if(need(p,has))return;if(farDunk(p,8,'¡EUROSTEP DUNK!')){p.es=1;p.skT=now+9000}};
 /* ---------- poderes ---------- */
-L.pw.LADRÓN=(p,c)=>{const B=G.B;if(B.h&&B.h.t!==p.t&&dist(p,B.h)<380&&(B.h.st==='idle'||B.h.st==='cross')){c.cd(14000);stolen(p,B.h);p.lad=performance.now()+4000;T(p,'¡MANOS RÁPIDAS!');flashFx('#ff5a5a');fxRing(p.x,p.y,'#ff5a5a',260,26);sfx('legend')}else{c.cd(9000);p.lad=performance.now()+5000;T(p,'¡MODO LADRÓN! (+VEL)');fxRing(p.x,p.y,'#ff5a5a',200,22)}};
+L.pw.LADRÓN=(p,c)=>{c.cd(14000);p.lad=performance.now()+6000;T(p,'¡MODO LADRÓN! ¡PULSA ROBAR!');flashFx('#ff5a5a');fxRing(p.x,p.y,'#ff5a5a',230,24);sfx('legend')};
 const rg=(w,t,ms)=>(p,c)=>{c.cd(ms||18000);rageStart(p,t)};
-L.pw.MAESTRO=rg('MAESTRO','¡MAGO DEL STEPBACK!');L.pw.ALIEN=rg('ALIEN','¡FORMA ALIEN!',20000);L.pw.CEREBRO=rg('CEREBRO','¡VISIÓN TOTAL!');
+L.pw.MAESTRO=(p,c)=>{c.cd(18000);rageStart(p,'¡MAGO DEL STEPBACK!');if(G.B.h!==p)return;let n=0,tm=0;const iv=setInterval(()=>{tm+=60;if(!G||G.B.h!==p||tm>5000){clearInterval(iv);return}if(p.st!=='idle'||p.cd>0)return;
+ if(n<2){n++;const col=n===1?'#4fa0ff':'#ffd23d';doStepback(p);p.sbk=1;T(p,n===1?'¡STEPBACK!':'¡OTRO MÁS ATRÁS!');G.shake=Math.max(G.shake,14);fxRing(p.x,p.y,col,280,26);fxRing(p.x,p.y,'#fff',160,18);burst(p.x,p.y-60,col,22,11);flashFx(col);sfx('perfect')}
+ else{clearInterval(iv);p.sb2=1;p.pw=1;doShoot(p);T(p,'¡DESDE EL LOGO!');fxBeam(p.x,p.y,'#4fa0ff');coinRain&&0;burst(p.x,p.y-100,'#ffd23d',26,12)}},60)};
+L.pw.ALIEN=rg('ALIEN','¡FORMA ALIEN!',20000);L.pw.CEREBRO=rg('CEREBRO','¡VISIÓN TOTAL!');
 L.pw.SHOWTIME=rg('SHOWTIME','¡SHOWTIME!');L.pw.ATÓMICO=rg('ATÓMICO','¡MODO ATÓMICO!');L.pw.REGATE=rg('REGATE','¡MAGO DEL BALÓN!');L.pw.EUROSTEP=rg('EUROSTEP','¡FUERZA GRIEGA!');
 /* Yanis (Eurostep): rango de mate ampliado siempre */
 const _mk=mkP;mkP=function(){const q=_mk.apply(this,arguments);try{if(CH[q.id].pw==='EUROSTEP')q.euro=1}catch(e){}return q};

@@ -25,8 +25,8 @@ if(use){
  FBX.signOut=async()=>{await ready;await M.signOut(auth);FBX.user=null};
  FBX.reset=async email=>{await ready;try{await M.sendPasswordResetEmail(auth,email)}catch(e){throw err(e)}};
  FBX.updateName=async n=>{await ready;await M.updateProfile(auth.currentUser,{displayName:n});FBX.user.name=n};
- FBX.loadSave=async()=>{await ready;const s=await M.getDoc(M.doc(db,'users',FBX.user.uid));return s.exists()&&s.data().data?JSON.parse(s.data().data):null};
- FBX.saveNow=async sv=>{await ready;const u=FBX.user;await M.setDoc(M.doc(db,'users',u.uid),{name:u.name,email:u.email,coins:sv.coins,gems:sv.gems||0,played:sv.played,wins:sv.wins,players:Object.keys(sv.owned).length,welcome:!!sv.welcome,data:JSON.stringify(sv),updated:M.serverTimestamp()},{merge:true});
+ FBX.loadSave=async()=>{await ready;const s=await M.getDoc(M.doc(db,'users',FBX.user.uid));if(!(s.exists()&&s.data().data))return null;const f=s.data(),d=JSON.parse(f.data);if(typeof f.coins==='number'&&d.coins>f.coins)d.coins=f.coins;if(typeof f.gems==='number'&&d.gems>f.gems)d.gems=f.gems;return d};
+ FBX.saveNow=async sv=>{await ready;const u=FBX.user;try{GD.sign(sv)}catch(e){}await M.setDoc(M.doc(db,'users',u.uid),{name:u.name,email:u.email,coins:sv.coins,gems:sv.gems||0,played:sv.played,wins:sv.wins,players:Object.keys(sv.owned).length,welcome:!!sv.welcome,data:JSON.stringify(sv),updated:M.serverTimestamp()},{merge:true});
   if(FBX.pubHook){try{const pr=FBX.pubHook(sv);if(pr)await M.setDoc(M.doc(db,'profiles',u.uid),{...pr,updated:M.serverTimestamp()},{merge:true})}catch(e){console.warn('perfil público',e)}}};
  const PP=p=>p.split('/');
  FBX.dbGet=async(path,id)=>{await ready;const s=await M.getDoc(M.doc(db,...PP(path),id));return s.exists()?{...s.data(),_id:s.id}:null};
@@ -47,7 +47,7 @@ if(use){
  FBX.reset=async()=>{throw new Error('En modo demo no hay correo de recuperación')};
  FBX.updateName=async n=>{const u=U();u[FBX.user.email].name=n;SU(u);FBX.user.name=n};
  FBX.loadSave=async()=>{const o=U()[FBX.user.email];return o&&o.data?JSON.parse(o.data):null};
- FBX.saveNow=async sv=>{const u=U(),o=u[FBX.user.email];if(!o)return;o.data=JSON.stringify(sv);SU(u);if(FBX.pubHook){const pr=FBX.pubHook(sv);if(pr)await FBX.dbSet('profiles',FBX.user.uid,pr)}};
+ FBX.saveNow=async sv=>{const u=U(),o=u[FBX.user.email];if(!o)return;try{GD.sign(sv)}catch(e){}o.data=JSON.stringify(sv);SU(u);if(FBX.pubHook){const pr=FBX.pubHook(sv);if(pr)await FBX.dbSet('profiles',FBX.user.uid,pr)}};
  const DB=()=>{try{return JSON.parse(localStorage.getItem('gh_db'))||{}}catch(e){return{}}},SDB=o=>localStorage.setItem('gh_db',JSON.stringify(o));
  FBX.dbGet=async(path,id)=>{const d=DB();return d[path]&&d[path][id]?{...d[path][id],_id:id}:null};
  FBX.dbSet=async(path,id,data,merge=true)=>{const d=DB();d[path]=d[path]||{};d[path][id]=merge?{...(d[path][id]||{}),...data}:data;SDB(d)};

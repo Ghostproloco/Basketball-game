@@ -5,7 +5,7 @@ const A=(id,o)=>{const c=Object.assign({id,rar:3,arch:'all',h:1,wd:1},o);CH.push
 A(65,{name:'Calvo Rocco',title:'El Perro Guardián',rar:2,arch:'def',pos:'SG',h:1.0,wd:1.0,pw:'LADRÓN',gift:1,jc:'#c0392b',
  base:{vel:76,tir:72,mat:70,reg:76,def:84,pas:76,reb:68,agu:80}});            // media 75
 A(66,{name:'Ladislao Brújula',title:'El Mago del Stepback',rar:3,arch:'all',pos:'SF',h:1.1,wd:1.08,pw:'MAESTRO',jc:'#2f6fe4',
- base:{vel:70,tir:97,mat:84,reg:95,def:68,pas:99,reb:84,agu:90}});
+ base:{vel:70,tir:99,mat:84,reg:95,def:68,pas:99,reb:84,agu:90}});
 A(67,{name:'Zenón Altaír',title:'El Alien de 2,30',rar:3,arch:'def',pos:'C',h:1.44,wd:.98,pw:'ALIEN',jc:'#161b2e',hide:1,ev:1,
  base:{vel:80,tir:92,mat:98,reg:80,def:99,pas:82,reb:97,agu:92}});
 A(68,{name:'Tomás Vigía',title:'El Cerebro de la Cancha',rar:3,arch:'reg',pos:'PG',h:1.0,wd:1.0,pw:'CEREBRO',jc:'#f4c20d',

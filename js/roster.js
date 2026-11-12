@@ -74,11 +74,26 @@ function fixSave(){
  for(const id in save.owned){const o=save.owned[id];if(!o.v2){o.st=Math.min(5,(o.st||0)+Math.floor(((o.lvl||1)-1)/2));o.lvl=1;o.v2=1}}
  if(!save.cfg)save.cfg={sfx:1,mus:1,shake:1,taunt:1,stad:0};if(!save.hats)save.hats={};if(save.cfg.v!==3){delete save.cfg.btn;save.cfg.v=3}if(save.hat===undefined)save.hat=null;
  if(!save.owned[save.sel])save.sel=+Object.keys(save.owned)[0];if(save.lineup&&save.lineup.some(i=>i<0))save.lineup=null}
-let save=(()=>{try{const s=JSON.parse(localStorage.getItem(SAVEKEY));if(s&&s.owned)return s}catch(e){}return newSave()})();
-fixSave();
-function adoptSave(o,key){if(key)SAVEKEY=key;for(const k of Object.keys(save))delete save[k];Object.assign(save,o);fixSave()}
+/* ---- anti-trampas: partida firmada + límite de ganancias por tiempo (no hay forma 100% segura en el cliente; esto frena la edición casual) ---- */
+const GD=(()=>{const K='gH·rv·2026·',h=t=>{let a=0xdeadbeef^t.length,b=0x41c6ce57;for(let i=0;i<t.length;i++){const c=t.charCodeAt(i);a=Math.imul(a^c,2654435761);b=Math.imul(b^c,1597334677)}a=Math.imul(a^(a>>>16),2246822507)^Math.imul(b^(b>>>13),3266489909);b=Math.imul(b^(b>>>16),2246822507)^Math.imul(a^(a>>>13),3266489909);return(4294967296*(2097151&b)+(a>>>0)).toString(36)},
+ body=o=>{const c={};for(const k of Object.keys(o))if(k!=='_s')c[k]=o[k];return JSON.stringify(c)},sig=o=>h(K+body(o)+h(body(o)+K));
+ let L=null;const CAP={c:15000,g:150,n:30},RF={c:20,g:.04,n:.05}; // capacidad y recarga por segundo
+ const ids=o=>Object.keys((o&&o.owned)||{});
+ return Object.freeze({
+  sign(o){try{o._s=sig(o)}catch(e){}},
+  ok(o){return !o||!o._s||o._s===sig(o)},
+  reset(o){L={c:+o.coins||0,g:+o.gems||0,ids:new Set(ids(o)),bc:CAP.c,bg:CAP.g,bn:CAP.n,t:Date.now()}},
+  guard(o){if(!L)return GD.reset(o);const now=Date.now(),dt=Math.min(3600,(now-L.t)/1000);L.t=now;L.bc=Math.min(CAP.c,L.bc+RF.c*dt);L.bg=Math.min(CAP.g,L.bg+RF.g*dt);L.bn=Math.min(CAP.n,L.bn+RF.n*dt);let bad=0;
+   if(typeof o.coins!=='number'||!isFinite(o.coins)||o.coins<0){o.coins=L.c;bad=1}if(typeof o.gems!=='number'||!isFinite(o.gems)||o.gems<0){o.gems=L.g;bad=1}
+   let d=o.coins-L.c;if(d>0){if(d>L.bc){o.coins=Math.floor(L.c+L.bc);bad=1;d=L.bc}L.bc-=d}L.c=o.coins;
+   d=o.gems-L.g;if(d>0){if(d>L.bg){o.gems=Math.floor(L.g+L.bg);bad=1;d=L.bg}L.bg-=d}L.g=o.gems;
+   const nw=ids(o).filter(i=>!L.ids.has(i));if(nw.length){const al=Math.floor(L.bn);if(nw.length>al){for(const i of nw.slice(al))delete o.owned[i];bad=1}L.bn-=Math.min(nw.length,al)}L.ids=new Set(ids(o));
+   if(o.admin){delete o.admin;bad=1}if(bad){o._t=(o._t||0)+1;try{window.toast&&toast('⚠ Cambios sospechosos revertidos')}catch(e){}}}})})();
+let save=(()=>{let s=null;try{s=JSON.parse(localStorage.getItem(SAVEKEY))}catch(e){}if(s&&s.owned&&GD.ok(s))return s;try{const b=JSON.parse(localStorage.getItem(SAVEKEY+'_bk'));if(b&&b.owned&&GD.ok(b)&&b._s)return b}catch(e){}return s&&s.owned&&GD.ok(s)?s:newSave()})();
+fixSave();GD.reset(save);
+function adoptSave(o,key){if(key)SAVEKEY=key;if(!GD.ok(o)){let bk=null;try{bk=JSON.parse(localStorage.getItem(SAVEKEY+'_bk'))}catch(e){}o=bk&&bk.owned&&GD.ok(bk)&&bk._s?bk:Object.assign(newSave(),{name:o&&o.name})}for(const k of Object.keys(save))delete save[k];Object.assign(save,o);delete save.admin;fixSave();GD.reset(save)}
 const cfgv=k=>!save.cfg||save.cfg[k]!==0;
-const store=()=>{try{if(window.__adm)window.__adm()}catch(e){}try{localStorage.setItem(SAVEKEY,JSON.stringify(save))}catch(e){}$$('.cn').forEach(e=>e.textContent=save.coins);$$('.gm').forEach(e=>e.textContent=save.gems||0);if(window.FBX&&FBX.user)FBX.queueSave(save)};
+let _sn=0;const store=()=>{GD.guard(save);GD.sign(save);try{const j=JSON.stringify(save);localStorage.setItem(SAVEKEY,j);if(++_sn%15===1)localStorage.setItem(SAVEKEY+'_bk',j)}catch(e){}$$('.cn').forEach(e=>e.textContent=save.coins);$$('.gm').forEach(e=>e.textContent=save.gems||0);if(window.FBX&&FBX.user)FBX.queueSave(save)};
 const MAXLV=10,MAXST=5,upCost=lv=>80*lv;
 const myStats=id=>{const o=save.owned[id];return statsOf(id,o.lvl,o.st)};
 const PACKS=[{n:'SOBRE BÁSICO',cost:100,cnt:1,min:0,b:0,e:'📦',lm:1},{n:'SOBRE PLATA',cost:450,cnt:3,min:1,b:.15,e:'🥈',lm:2},{n:'SOBRE ORO',cost:1000,cnt:5,min:1,b:.35,e:'🥇',lm:3},{n:'SOBRE LEYENDA',cost:2500,cnt:5,min:2,b:.8,e:'👑',lm:4},{n:'SOBRE DE BIENVENIDA',cost:0,cnt:10,min:2,max:2,all:1,nl:1,b:0,e:'🎁',welcome:1}];
