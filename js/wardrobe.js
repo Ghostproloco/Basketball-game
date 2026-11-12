@@ -95,12 +95,12 @@ function auraFx(g,o,x,yb,H,u,f,rr){const c=o.c||'#fff';g.save();g.globalComposit
  else if(o.fx==='bolt'){const s0=f>>2;for(let b=0;b<2;b++){let px=x+(sr(b,s0)-.5)*60*u,py=yb-H*(.2+sr(b+9,s0)*.5);g.strokeStyle=hex2(c,.9);g.lineWidth=3*u;g.shadowColor=c;g.shadowBlur=14*u;g.beginPath();g.moveTo(px,py);for(let k=1;k<6;k++){px+=(sr(b*7+k,s0)-.5)*30*u;py+=14*u*(sr(k,s0+b)+.3);g.lineTo(px,py)}g.stroke();g.strokeStyle='#fff';g.lineWidth=1*u;g.stroke()}}
  g.restore()}
 // atrás (alas, capa, mochila) — se dibuja ANTES del jugador, a la altura de los hombros
-function backDraw(g,E,x,yf,sc,hh,f,fc){const it=items(E).bk;if(!it||!ACC[it.acc])return;const H=210*sc*hh,u=sc*hh/.85*.9,sh=yf-H*.98+44*u;g.save();g.translate(x-fc*4*u,WING.has(it.acc)?yf-H*.98+88*u:sh);if(WING.has(it.acc)){g.scale(.74,.56);g.translate(0,-44*u)}else if(it.acc==='cape'||it.acc==='jet')g.translate(0,0);ACC[it.acc](g,u,f,it,fc);g.restore()}
+function backDraw(g,E,x,yf,sc,hh,f,fc,lying){const it=items(E).bk;if(!it||!ACC[it.acc])return;const H=210*sc*hh,u=sc*hh/.85*.9,sh=yf-H*.98+44*u;g.save();if(lying){g.translate(x-fc*H*.17,yf-H*.12);g.rotate(fc*.25);g.scale(.85,.85)}else g.translate(x-fc*4*u,WING.has(it.acc)?yf-H*.98+88*u:sh);if(WING.has(it.acc)){g.scale(.74,.56);g.translate(0,-44*u)}else if(it.acc==='cape'||it.acc==='jet')g.translate(0,0);ACC[it.acc](g,u,f,it,fc);g.restore()}
 // delante (cabeza, cara, aura, joyas del traje)
 function frontDraw(g,E,x,yf,sc,hh,f,fc){const H=210*sc*hh,u=sc*hh/.85*.9,yh=yf-H*.98,I=items(E);if(I.fx)auraFx(g,I.fx,x,yf,H,sc/.85,f);
- for(const it of[I.hd,I.fc]){if(!it||!ACC[it.acc])continue;g.save();g.translate(x,yh);ACC[it.acc](g,u,f,it,fc);g.restore()}
+ for(const it of[I.hd,I.fc]){if(!it||!ACC[it.acc]||it.acc==='horns'||it.acc==='ears'||it.acc==='bunny')continue;g.save();g.translate(x,yh);ACC[it.acc](g,u,f,it,fc);g.restore()}
  if(E.z){const cy=yf-H*.6,pu=.7+.3*Math.sin(f*.15);g.save();g.globalCompositeOperation='lighter';const gr=g.createRadialGradient(x,cy,1,x,cy,16*u);gr.addColorStop(0,'#fff6b0');gr.addColorStop(.4,hex2('#ff9a1a',pu));gr.addColorStop(1,'#ff3b0000');g.fillStyle=gr;g.beginPath();g.arc(x,cy,16*u,0,7);g.fill();g.restore();
-  g.save();g.fillStyle='#d99a1f';g.strokeStyle='#3a1a00';g.lineWidth=1.6;for(const s of[-1,1]){g.beginPath();g.moveTo(x+s*10*u,yf-H*.78);g.lineTo(x+s*22*u,yf-H*.86);g.lineTo(x+s*20*u,yf-H*.72);g.closePath();g.fill();g.stroke()}g.restore()}}
+}}
 // ---- enganche en los dibujos de jugador ----
 const MINE='#detail,#vL,#wmod,#gpk,#pf-body,#barrio',PX={drawFig:{x:2,y:3,sc:4,fl:5,col:6,hid:7},drawRigFig:{x:1,y:2,sc:3,fl:4,col:5,hid:6,o:7}};
 let depth=0;const fr=()=>typeof G!=='undefined'&&G?G.fr:(typeof pf!=='undefined'?pf:0);
@@ -109,7 +109,7 @@ for(const n of['drawFig','drawRigFig']){const _f=window[n],ix=PX[n];window[n]=fu
  if(depth===0){const p=window.__BP;if(p&&p.E)E=p.E;else if(!p){const cv=a[0]&&a[0].canvas;if(cv&&cv.closest&&cv.closest(MINE)){const e=eq();if(any(e)){E=e;mine=1}}}}
  const hid=a[ix.hid];if(E&&CH[hid]){const hh=CH[hid].h||1,f=fr();try{
   if(mine){const j=jer(E);if(j){a[ix.col]=j.col;if(ix.o)a[ix.o]=Object.assign({},a[ix.o],{pat:j.pat,pc:j.pc})}}
-  backDraw(a[0],E,a[ix.x],a[ix.y],a[ix.sc],hh,f,a[ix.fl]||1)}catch(e){}}
+  {const o=ix.o?a[ix.o]:null,hv=o?(1+((o.big||1)-1)*.45)*(o.tall||1):1,pp=window.__BP;backDraw(a[0],E,a[ix.x],a[ix.y],a[ix.sc],hh*hv,f,a[ix.fl]||1,!!(pp&&pp.st==='fall'))}}catch(e){}}
  depth++;try{return _f.apply(this,a)}finally{if(--depth===0){window.__BP=null;if(mine&&E)try{frontDraw(a[0],E,a[ix.x],a[ix.y],a[ix.sc],CH[hid].h||1,fr(),a[ix.fl]||1)}catch(e){}}}}}
 const _ov=MV.over;
 MV.over=function(g,p,sc){_ov.apply(this,arguments);try{const E=p.E;if(!E||!G||G.mode==='end')return;const hh=CH[p.hdo||p.id].h||1;if(p.st==='fall'){const I=items(E);if(I.fx)auraFx(g,I.fx,p.x,p.y-p.z,60,sc/.85,G.fr);return}frontDraw(g,E,p.x,p.y-p.z,sc,hh,G.fr,p.f||1)}catch(e){}};

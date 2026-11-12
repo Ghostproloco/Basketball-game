@@ -713,7 +713,7 @@ function draw(){const w=innerWidth,h=innerHeight,port=h>w*1.05,VW=port?950:1900;
   if(p.sprint&&G.fr%3==0)G.fx.push({k:'p',x:p.x-p.f*30,y:p.y-8,vx:-p.f*2,vy:-1,t:0,T:14,c:'#fff8'})}
  const hp=G.hu;if(G.mode!=='end'){const sc=scl(hp),x=hp.x,y=hp.y-hp.z-310*sc+Math.sin(G.fr/6)*6;ctx.fillStyle='#ffe45c';ctx.strokeStyle='#000';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(x-18,y-22);ctx.lineTo(x+18,y-22);ctx.lineTo(x,y+4);ctx.closePath();ctx.fill();ctx.stroke()
   }
- for(const e of G.fx){if(e.k==='t'){const a=1-e.t/e.T;ctx.globalAlpha=Math.max(0,a);ctx.font=`${e.s}px "Press Start 2P",monospace`;ctx.textAlign='center';ctx.lineWidth=8;ctx.strokeStyle='#000';ctx.strokeText(e.txt,e.x,e.y-e.t*2);ctx.fillStyle=e.c;ctx.fillText(e.txt,e.x,e.y-e.t*2);ctx.globalAlpha=1}
+ for(const e of G.fx){if(e.k==='t'){const a=1-e.t/e.T;ctx.globalAlpha=Math.max(0,a);ctx.font=`${Math.round(Math.min(e.s,64)*.6)}px "Press Start 2P",monospace`;ctx.textAlign='center';ctx.lineWidth=5;ctx.strokeStyle='#000';ctx.strokeText(e.txt,e.x,e.y-e.t*2);ctx.fillStyle=e.c;ctx.fillText(e.txt,e.x,e.y-e.t*2);ctx.globalAlpha=1}
   else if(e.k==='ring'){const k=e.t/e.T,r=e.r1*k;ctx.save();ctx.globalAlpha=1-k;ctx.strokeStyle=e.c;ctx.lineWidth=10*(1-k)+2;ctx.beginPath();ctx.ellipse(e.x,e.y,Math.max(1,r),Math.max(1,r*.38),0,0,7);ctx.stroke();ctx.restore()}
   else if(e.k==='fn'){ctx.save();try{e.f(ctx,e,e.t/e.T)}catch(x){}ctx.restore()}
   else if(e.k==='bolt'){ctx.save();ctx.globalAlpha=1-e.t/e.T;ctx.strokeStyle='#fff';ctx.shadowColor=e.c;ctx.shadowBlur=18;ctx.lineWidth=5;ctx.beginPath();e.pts.forEach(([a,b],i)=>i?ctx.lineTo(e.x+a,e.y+b):ctx.moveTo(e.x,e.y));ctx.stroke();ctx.restore()}
