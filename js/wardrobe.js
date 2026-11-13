@@ -177,5 +177,6 @@ window.renderTeam=function(){_rt.apply(this,arguments);try{const d=$('#detail .d
 const _rp=window.renderProfile;
 window.renderProfile=function(){_rp.apply(this,arguments);try{const s=save.owned[save.sel];if(s){$('#pf-body').insertAdjacentHTML('afterbegin',`<div class="pflook">${cardHTML(save.sel,s)}</div>`);mountPreviews($('#pf-body'))}}catch(e){}};
 function eqOf(a){const E={j:null,z:null,h:null,f:null,b:null};if(!a||typeof a!=='object')return E;['j','z','h','f','b'].forEach((k,i)=>{const id=+a[i],o=id>=0&&OUTF[id];if(o&&o.slot===k)E[k]=o});return E}
-window.WARD={eq,eqOf,equip,openWardrobe,openPack,perks};
+function dress(p,a,col){const E=eqOf(a),has=any(E),j=has?jer(E):null;p.E=has?E:null;const c=j?j.col:col;p.col=c;p.pat=j?j.pat:patOf(c);p.pc=j?j.pc:pcOf(c)}
+window.WARD={eq,eqOf,equip,openWardrobe,openPack,perks,dress,ACC,PAL,wingShape,WING,BACK,FACE,items};
 })();

@@ -219,7 +219,7 @@ L.tick=function(p){_tick.apply(this,arguments);if(!m3(p))return;const w=W(p),n=n
 /* ================= canje de códigos ================= */
 const H=s=>{let h1=0xdeadbeef,h2=0x41c6ce57;for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);h1=Math.imul(h1^c,2654435761);h2=Math.imul(h2^c,1597334677)}h1=Math.imul(h1^h1>>>16,2246822507)^Math.imul(h2^h2>>>13,3266489909);h2=Math.imul(h2^h2>>>16,2246822507)^Math.imul(h1^h1>>>13,3266489909);return(4294967296*(2097151&h2)+(h1>>>0)).toString(36)};
 window.__codeHash=H;
-const CODES={"2l7ij81zhl":77,"iexin3nqu5":82};
+const CODES={"2l7ij81zhl":77,"iexin3nqu5":82,"1vgsvtwkqtp":86};
 function openCode(){let o=$('#rdm');if(!o){o=document.createElement('div');o.id='rdm';document.body.appendChild(o)}
  o.innerHTML='<div class="sbox"><b>🎟 CANJEAR CÓDIGO</b><small>Escribe un código especial para desbloquear jugadores exclusivos</small><input id="rdm-in" maxlength="20" placeholder="TU CÓDIGO" autocapitalize="characters" autocomplete="off" spellcheck="false"><div id="rdm-m" style="min-height:18px;font-size:12px;color:#ffd23d"></div><button class="btn main" id="rdm-go">CANJEAR</button><button class="btn small" id="rdm-x">CERRAR</button></div>';o.classList.add('on');
  const inp=$('#rdm-in'),m=$('#rdm-m');setTimeout(()=>{try{inp.focus()}catch(e){}},50);
@@ -232,4 +232,5 @@ function openCode(){let o=$('#rdm');if(!o){o=document.createElement('div');o.id=
   try{sfx('legend')}catch(e){}$('#rdm-ok').onclick=()=>{o.classList.remove('on');try{renderMenu()}catch(e){}}};
  $('#rdm-go').onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go()};$('#rdm-x').onclick=()=>o.classList.remove('on')}
 const bc=$('#b-code');if(bc)bc.addEventListener('click',openCode);
+window.__L3={dash,dashTick,need};
 })();
