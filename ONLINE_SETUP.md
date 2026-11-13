@@ -21,3 +21,11 @@ Sin Firebase (modo demo/local) funciona entre pestañas del mismo navegador.
 ## Códigos de canje (menú > 🎟 CÓDIGO)
 - `CALVOORO` → Teodoro Pelón ★ Dorado (85)
 - `MAMBA24` → Dante Vipérez (105, con Forma Mamba, HOOK y DIVE)
+
+
+## Códigos nuevos
+- `GARZA35` → Octavio Zarza (Leyenda; también sale en sobres)
+
+
+## Rankeado (v24)
+Pega de nuevo el contenido de `DATABASE_RULES.json` en Firebase > Realtime Database > Reglas (añade el nodo `rank` con índice por `t`). Sin eso el TOP muestra jugadores simulados.

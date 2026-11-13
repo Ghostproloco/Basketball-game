@@ -17,6 +17,16 @@
           ".validate": "newData.hasChildren(['s','n']) && newData.child('s').isString() && newData.child('s').val().length < 6000"
         }
       }
+    },
+    "rank": {
+      ".read": "auth != null",
+      ".indexOn": [
+        "t"
+      ],
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid",
+        ".validate": "newData.hasChildren(['n','t','cc']) && newData.child('n').isString() && newData.child('n').val().length <= 14 && newData.child('t').isNumber() && newData.child('t').val() >= 0 && newData.child('t').val() <= 9999 && newData.child('cc').isString() && newData.child('cc').val().length == 2"
+      }
     }
   }
 }

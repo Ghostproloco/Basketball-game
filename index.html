@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Gacha Hoops 2D · 1 vs 1</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/menu2.css"><link rel="stylesheet" href="css/sobres.css"></head><body>
+<link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/menu2.css"><link rel="stylesheet" href="css/sobres.css"><link rel="stylesheet" href="css/modes.css"><link rel="stylesheet" href="css/season.css"><link rel="stylesheet" href="css/train.css"><link rel="stylesheet" href="css/menu3.css"></head><body>
 <canvas id="gameCanvas"></canvas>
 <div id="barrio" class="screen hidden"><canvas id="bcv"></canvas><button id="bback" class="btn small">← MENÚ</button><div id="bcn">🪙 <b id="bcoin">0</b></div><div id="bnm" class="hidden"></div><button id="bgo" class="btn main hidden">ENTRAR ▶</button><div id="bjoy"><i></i></div><div id="bzone"></div><div id="bbuf"></div><button id="bonl" class="btn small">🌐</button><button id="bveh" class="btn small hidden">🛹 MONTAR</button><button id="bemo" class="btn small">😎</button><div id="bemr"></div><div id="bq"><div class="bqb"><div class="bqh"><b>📋 MISIONES DEL DÍA</b><button id="bq-x" class="btn small">✕</button></div><div id="bq-b"></div><small>Se renuevan cada día</small></div></div></div>
 
@@ -38,6 +38,7 @@
     <button class="tile team" id="b-team"><span class="ti">⭐</span><b>EQUIPO</b><small>Elige y mejora</small></button>
     <button class="tile evt" id="b-event"><span class="ti">👽</span><b>EVENTO ALIEN</b><small>Gana un 🎟 ticket</small><span class="bdg">NUEVO</span></button>
     <button class="tile barrio" id="b-barrio"><span class="ti">🏙</span><b>BARRIO</b><small>Pasea y entra a todo</small><span class="bdg">NUEVO</span></button>
+    <button class="tile modes" id="b-modes"><span class="ti">🗼</span><b>MODOS</b><small>Torre · Reto · Torneo</small><span class="bdg">NUEVO</span></button>
     <button class="tile clan" id="b-clan"><span class="ti">🛡</span><b>CLANES</b><small>Únete y busca</small></button>
    </div>
   </div>
@@ -51,7 +52,7 @@
    <button id="b-how"><span>❓</span>AYUDA</button>
    <button id="b-mus"><span>🎵</span>MÚSICA</button>
    <button id="b-snd"><span>🔊</span>SONIDO</button>
-   <span class="ver">v20</span>
+   <span class="ver">v24</span>
   </div>
  </section>
 
@@ -158,7 +159,7 @@
 <script src="js/auth.js"></script>
 <script src="js/social.js"></script><script src="js/ui.js"></script><script src="js/events.js"></script><script src="js/tutorial.js"></script><script src="js/career.js"></script>
 <script src="js/sobres.js"></script><script src="js/wardrobe.js"></script><script src="js/online.js"></script>
-<script src="js/duel.js"></script><script src="js/barrio.js"></script><script src="js/rim.js"></script><style>*{touch-action:manipulation!important}html,body,canvas,#controls,#controls *{touch-action:none!important}</style>
+<script src="js/legends4.js"></script><script src="js/sound2.js"></script><script src="js/duel.js"></script><script src="js/modes.js"></script><script src="js/ranked.js"></script><script src="js/season.js"></script><script src="js/train.js"></script><script src="js/menu3.js"></script><script src="js/barrio.js"></script><script src="js/rim.js"></script><style>*{touch-action:manipulation!important}html,body,canvas,#controls,#controls *{touch-action:none!important}</style>
 <script>
 /* sin zoom por doble toque / pellizco en iPhone */
 let _lt=0;document.addEventListener('touchend',e=>{const n=Date.now(),t=e.target;if(n-_lt<350&&t&&t.closest&&(t.closest('#controls')||t.id==='gameCanvas'))e.preventDefault();_lt=n},{passive:false});
